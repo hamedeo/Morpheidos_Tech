@@ -61,8 +61,8 @@ function SectionHeading({ id, children }: { id: string; children: React.ReactNod
 function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Top return bar */}
-      <div className="border-b border-white/10">
+      {/* Fixed top bar + nav */}
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-background/85 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-3 text-xs md:px-12">
           <a
             href="https://hamedeo.github.io/"
@@ -75,26 +75,64 @@ function Home() {
             A company by <span className="text-primary">Hamed Abdollahi</span>
           </span>
         </div>
-      </div>
+        <div className="mx-auto max-w-[1400px] px-6 pb-3 md:px-12">
+          <nav className="flex flex-wrap items-center justify-end gap-x-8 gap-y-2 text-[15px]">
+            {NAV.map((n, i) => (
+              <a
+                key={n.label}
+                href={n.href}
+                className={`font-sans transition hover:text-primary ${
+                  i === 0
+                    ? "border-b-2 border-primary pb-1 text-primary"
+                    : "text-white/80"
+                }`}
+              >
+                {n.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </header>
 
-      {/* Top nav */}
-      <div className="mx-auto max-w-[1400px] px-6 pt-8 md:px-12">
-        <nav className="flex flex-wrap items-center justify-end gap-x-8 gap-y-3 text-[15px]">
-          {NAV.map((n, i) => (
-            <a
-              key={n.label}
-              href={n.href}
-              className={`font-sans transition hover:text-primary ${
-                i === 0
-                  ? "border-b-2 border-primary pb-1 text-primary"
-                  : "text-white/80"
-              }`}
-            >
-              {n.label}
-            </a>
-          ))}
-        </nav>
-      </div>
+      {/* Spacer for fixed header */}
+      <div className="h-[104px]" aria-hidden />
+
+      {/* HERO */}
+      <section className="relative">
+        <img
+          src={heroImg}
+          alt="Finger touching a glowing circuit grid"
+          width={1920}
+          height={1080}
+          className="h-[520px] w-full object-cover md:h-[620px]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+        <div className="absolute inset-0 flex items-center">
+          <div className="mx-auto w-full max-w-[1400px] px-6 md:px-12">
+            <div className="max-w-xl">
+              <p className="font-sans text-sm uppercase tracking-[0.35em] text-primary">
+                Morpheidos Tech
+              </p>
+              <h1 className="mt-4 font-display text-5xl font-bold leading-[1.05] text-white md:text-6xl">
+                Engineering<br />the possibilities
+              </h1>
+              <p className="mt-6 max-w-md text-base leading-relaxed text-white/75">
+                Independent engineering studio in the Netherlands — embedded
+                systems, cloud platforms and industrial software for
+                forward-looking industries.
+              </p>
+              <a
+                href="#about"
+                className="mt-8 inline-flex items-center gap-3 rounded-full bg-primary px-8 py-3.5 font-sans text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition hover:brightness-110"
+              >
+                Learn more <ChevronDown className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
 
       {/* Main grid: sidebar + content */}
       <div className="mx-auto grid max-w-[1400px] gap-10 px-6 pb-24 pt-10 md:grid-cols-[300px_1fr] md:gap-16 md:px-12">
