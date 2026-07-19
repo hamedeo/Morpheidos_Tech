@@ -31,22 +31,24 @@
 
 :root {
   --radius: 0.25rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.2 0.02 250);
-  --card: oklch(0.99 0 0);
-  --card-foreground: oklch(0.2 0.02 250);
-  --primary: oklch(0.74 0.17 62);            /* orange */
+  /* Pure black canvas inspired by hamedeo.github.io */
+  --background: oklch(0 0 0);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.14 0 0);
+  --card-foreground: oklch(0.98 0 0);
+  /* Magenta/pink accent replacing orange */
+  --primary: oklch(0.63 0.24 5);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.96 0.005 250);
-  --secondary-foreground: oklch(0.2 0.02 250);
-  --muted: oklch(0.95 0.005 250);
-  --muted-foreground: oklch(0.5 0.02 250);
-  --accent: oklch(0.74 0.17 62);
+  --secondary: oklch(0.16 0 0);
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.18 0 0);
+  --muted-foreground: oklch(0.72 0 0);
+  --accent: oklch(0.63 0.24 5);
   --accent-foreground: oklch(1 0 0);
-  --ink: oklch(0.2 0.015 250);               /* dark charcoal */
+  --ink: oklch(0.08 0 0);
   --ink-foreground: oklch(0.98 0 0);
-  --border: oklch(0.9 0.005 250);
-  --ring: oklch(0.74 0.17 62);
+  --border: oklch(0.24 0 0);
+  --ring: oklch(0.63 0.24 5);
 }
 
 @layer base {
@@ -64,7 +66,6 @@
   }
 }
 
-/* Angular geometric edge shapes referenced by the design */
 @utility clip-slant-tr {
   clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
 }
@@ -73,4 +74,12 @@
 }
 @utility clip-notch-tr {
   clip-path: polygon(0 0, 88% 0, 100% 12%, 100% 100%, 0 100%);
+}
+
+@utility wavy-divider {
+  background-image: radial-gradient(circle at 3px 3px, var(--color-border) 1.2px, transparent 1.5px);
+  background-size: 8px 3px;
+  background-repeat: repeat-x;
+  background-position: center;
+  height: 3px;
 }
