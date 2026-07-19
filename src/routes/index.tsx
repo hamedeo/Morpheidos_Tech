@@ -4,20 +4,16 @@ import {
   Users,
   TrendingUp,
   BarChart3,
-  ChevronDown,
   Phone,
   Mail,
   MapPin,
-  Facebook,
   Linkedin,
-  Instagram,
-  ArrowUp,
+  Github,
   ArrowLeft,
+  Briefcase,
+  Building2,
 } from "lucide-react";
-import heroImg from "@/assets/hero.jpg";
 import aboutImg from "@/assets/about.jpg";
-import valuesImg from "@/assets/values.jpg";
-import teamImg from "@/assets/team.jpg";
 import teamWideImg from "@/assets/team-wide.jpg";
 import advantageImg from "@/assets/advantage.jpg";
 import careersImg from "@/assets/careers.jpg";
@@ -27,380 +23,368 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Morpheidos Tech — Engineering the possibilities" },
-      { name: "description", content: "Netherlands-based technology company building embedded systems, cloud platforms and industrial software for forward-looking industries." },
+      {
+        name: "description",
+        content:
+          "Netherlands-based engineering studio building embedded systems, cloud platforms and industrial software for forward-looking industries.",
+      },
     ],
   }),
 });
 
 const NAV = [
-  { label: "ABOUT", href: "#about" },
-  { label: "CORE VALUES", href: "#values" },
-  { label: "TEAM", href: "#team" },
-  { label: "ADVANTAGES", href: "#advantages" },
-  { label: "CAREER", href: "#career" },
-  { label: "CONTACT", href: "#contact" },
+  { label: "About", href: "#about" },
+  { label: "Services", href: "#services" },
+  { label: "Values", href: "#values" },
+  { label: "Team", href: "#team" },
+  { label: "Careers", href: "#careers" },
+  { label: "Contact", href: "#contact" },
 ];
 
-function Logo({ className = "" }: { className?: string }) {
+function WavyRule() {
+  return <div className="wavy-divider my-6 w-full" aria-hidden />;
+}
+
+function SectionHeading({ id, children }: { id: string; children: React.ReactNode }) {
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      <svg viewBox="0 0 48 48" className="h-10 w-10" aria-hidden>
-        {[
-          [8, 8], [24, 8], [40, 8],
-          [8, 24], [24, 24], [40, 24],
-          [8, 40], [24, 40], [40, 40],
-        ].map(([x, y], i) => (
-          <circle
-            key={i}
-            cx={x}
-            cy={y}
-            r="4"
-            fill={[0, 4, 8].includes(i) ? "var(--primary)" : "#8a8a8a"}
-          />
-        ))}
-      </svg>
-      <div className="leading-tight">
-        <div className="font-display text-xl font-bold tracking-[0.18em] text-foreground">MORPHEIDOS</div>
-        <div className="font-display text-[10px] tracking-[0.35em] text-muted-foreground">T E C H N O L O G Y</div>
-      </div>
-    </div>
+    <h2
+      id={id}
+      className="flex scroll-mt-24 items-center gap-3 font-display text-2xl font-bold text-primary"
+    >
+      <span className="h-2 w-2 rounded-full bg-primary" />
+      {children}
+    </h2>
   );
 }
 
 function Home() {
   return (
-    <div className="relative overflow-hidden bg-background">
-      {/* Pure-black canvas with magenta accents, inspired by hamedeo.github.io */}
-      <div className="relative mx-auto max-w-[1400px]">
-        {/* Return-to-personal-site bar */}
-        <div className="flex items-center justify-between border-b border-white/10 bg-ink px-6 py-3 text-xs md:px-12">
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Top return bar */}
+      <div className="border-b border-white/10">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-3 text-xs md:px-12">
           <a
             href="https://hamedeo.github.io/"
-            className="group inline-flex items-center gap-2 font-display tracking-[0.25em] text-white/70 transition hover:text-primary"
+            className="group inline-flex items-center gap-2 font-sans text-white/60 transition hover:text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5 transition group-hover:-translate-x-0.5" />
-            BACK TO HAMEDEO.GITHUB.IO
+            hamedeo.github.io
           </a>
-          <span className="hidden font-display tracking-[0.25em] text-white/40 sm:inline">
-            A COMPANY BY <span className="text-primary">HAMED ABDOLLAHI</span>
+          <span className="hidden font-sans text-white/40 sm:inline">
+            A company by <span className="text-primary">Hamed Abdollahi</span>
           </span>
         </div>
+      </div>
 
-        {/* HERO */}
-        <section className="relative bg-ink">
-          <div className="relative">
-            <img
-              src={heroImg}
-              alt="Finger touching a glowing circuit grid"
-              width={1920}
-              height={1200}
-              className="clip-notch-tr h-[520px] w-full object-cover md:h-[640px]"
-            />
-            <div className="clip-notch-tr absolute inset-0 bg-gradient-to-r from-ink/85 via-ink/40 to-transparent" />
+      {/* Top nav */}
+      <div className="mx-auto max-w-[1400px] px-6 pt-8 md:px-12">
+        <nav className="flex flex-wrap items-center justify-end gap-x-8 gap-y-3 text-[15px]">
+          {NAV.map((n, i) => (
+            <a
+              key={n.label}
+              href={n.href}
+              className={`font-sans transition hover:text-primary ${
+                i === 0
+                  ? "border-b-2 border-primary pb-1 text-primary"
+                  : "text-white/80"
+              }`}
+            >
+              {n.label}
+            </a>
+          ))}
+        </nav>
+      </div>
 
-            {/* Nav */}
-            <div className="absolute inset-x-0 top-0 z-10 flex flex-wrap items-center justify-between gap-4 px-6 py-8 md:px-12">
-              <Logo />
-              <nav className="hidden items-center gap-8 md:flex">
-                {NAV.map((n, i) => (
-                  <a
-                    key={n.label}
-                    href={n.href}
-                    className={`font-display text-sm tracking-[0.2em] text-white/90 transition hover:text-primary ${i === 0 ? "border-b-2 border-primary pb-1 text-primary" : ""}`}
-                  >
-                    {n.label}
-                  </a>
-                ))}
-              </nav>
-            </div>
-
-            {/* Headline */}
-            <div className="absolute inset-0 z-10 flex items-center">
-              <div className="ml-auto w-full max-w-xl px-6 pt-24 text-right md:px-12">
-                <h1 className="font-display text-5xl font-light leading-[1.05] text-white md:text-6xl">
-                  Engineering<br />the possibilities
-                </h1>
-                <a
-                  href="#about"
-                  className="mt-10 inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 font-display text-sm font-semibold tracking-[0.25em] text-primary-foreground shadow-lg shadow-primary/30 transition hover:brightness-110"
-                >
-                  LEARN MORE <ChevronDown className="h-4 w-4" />
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ABOUT */}
-        <section id="about" className="relative bg-background px-6 py-20 md:px-12">
-          <div className="grid gap-10 md:grid-cols-2">
-            <div>
-              <h2 className="font-display text-3xl font-bold tracking-[0.15em] text-foreground">ABOUT</h2>
-              <div className="mt-4 h-1 w-16 bg-primary" />
-              <div className="mt-8 space-y-5 text-sm leading-relaxed text-muted-foreground">
-                <p>
-                  At Morpheidos Tech we deliver end-to-end technology services from
-                  concept and architecture through prototyping, production
-                  engineering and long-term operations.
-                </p>
-                <p>
-                  Headquartered in the Netherlands, our engineers work
-                  hand-in-hand with clients across Europe to build embedded
-                  systems, cloud platforms and industrial software that create
-                  measurable business value.
-                </p>
-                <p>
-                  Today we are proud of a growing reputation with clients in
-                  mobility, energy and advanced manufacturing — and of a proven
-                  track record delivering on time, on budget and on ambition.
-                </p>
-              </div>
-              <a
-                href="#values"
-                className="mt-8 inline-block bg-primary px-8 py-3 font-display text-xs font-semibold tracking-[0.25em] text-primary-foreground transition hover:brightness-110"
-              >
-                KNOW MORE
-              </a>
-            </div>
-            <div className="relative">
-              <div className="absolute -right-6 -top-6 h-full w-full border-4 border-primary/70" aria-hidden />
-              <img
-                src={aboutImg}
-                alt="Morpheidos engineer at workstation"
-                width={1200}
-                height={800}
-                loading="lazy"
-                className="relative h-full w-full object-cover"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* CORE VALUES */}
-        <section id="values" className="relative bg-ink px-6 py-20 md:px-12">
-          <div className="grid gap-10 md:grid-cols-2">
-            <div className="relative">
-              <div className="absolute -bottom-6 -left-6 h-40 w-40 border-4 border-primary" aria-hidden />
-              <div className="absolute -right-6 top-8 h-56 w-56 bg-primary/90" aria-hidden />
-              <img
-                src={valuesImg}
-                alt="Engineer working at dusk"
-                width={900}
-                height={1100}
-                loading="lazy"
-                className="relative z-[1] h-[420px] w-full object-cover"
-              />
-            </div>
-            <div className="text-white/85">
-              <div className="text-right">
-                <h2 className="font-display text-3xl font-bold tracking-[0.15em] text-white">CORE VALUES</h2>
-                <div className="ml-auto mt-4 h-1 w-16 bg-primary" />
-              </div>
-
-              <div className="mt-10 space-y-8">
-                {[
-                  { t: "PEOPLE FIRST", d: "Our engineers are at the heart of everything we build. We invest in their growth, their craft and their voice." },
-                  { t: "INTEGRITY", d: "We do what we say. Honest conversations, transparent estimates and code we are proud to hand over." },
-                  { t: "INNOVATION", d: "We stay curious. From FPGA firmware to distributed cloud, we explore what is next so clients ship what is best." },
-                  { t: "CRAFT EXCELLENCE", d: "Every deliverable meets a high bar for architecture, testing and documentation — nothing shipped is throwaway." },
-                ].map((v) => (
-                  <div key={v.t}>
-                    <h3 className="font-display text-base font-bold tracking-[0.2em] text-white">{v.t}</h3>
-                    <p className="mt-2 max-w-md text-sm leading-relaxed text-white/70">{v.d}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* TEAM */}
-        <section id="team" className="relative bg-background px-6 py-20 md:px-12">
-          <h2 className="font-display text-3xl font-bold tracking-[0.15em] text-foreground">OUR TEAM</h2>
-          <div className="mt-4 h-1 w-16 bg-primary" />
-
-          <div className="mt-12 grid gap-10 md:grid-cols-2 md:items-start">
-            <img
-              src={teamImg}
-              alt="Morpheidos engineering team collaborating"
-              width={1200}
-              height={800}
-              loading="lazy"
-              className="h-72 w-full object-cover md:h-80"
-            />
-            <div>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                Over the past decade our team has accumulated deep experience
-                delivering complex hardware/software systems for European
-                industry leaders — from safety-critical firmware to
-                cloud-native platforms handling millions of daily events.
-              </p>
-              <ul className="mt-6 space-y-3 text-sm text-foreground">
-                {[
-                  "Full-stack expertise across embedded C/C++, Rust, TypeScript and Python",
-                  "Deep experience with cloud-native architectures on AWS, Azure and on-prem Kubernetes",
-                  "Hands-on with industrial protocols: CAN, Modbus, OPC-UA and MQTT",
-                  "Certified in ISO 27001 and IEC 62443 secure development practices",
-                  "Fluent collaboration across Dutch, English, German and French",
-                ].map((b) => (
-                  <li key={b} className="flex gap-3">
-                    <span className="mt-1.5 h-2 w-2 flex-none bg-primary" />
-                    <span>{b}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+      {/* Main grid: sidebar + content */}
+      <div className="mx-auto grid max-w-[1400px] gap-10 px-6 pb-24 pt-10 md:grid-cols-[300px_1fr] md:gap-16 md:px-12">
+        {/* SIDEBAR */}
+        <aside className="md:sticky md:top-8 md:h-fit">
+          {/* Brand mark */}
+          <div className="mx-auto flex h-52 w-52 items-center justify-center rounded-full bg-ink ring-1 ring-white/10">
+            <svg viewBox="0 0 100 100" className="h-28 w-28" aria-hidden>
+              {[
+                [25, 25], [50, 25], [75, 25],
+                [25, 50], [50, 50], [75, 50],
+                [25, 75], [50, 75], [75, 75],
+              ].map(([x, y], i) => (
+                <circle
+                  key={i}
+                  cx={x}
+                  cy={y}
+                  r="6"
+                  fill={[0, 4, 8].includes(i) ? "var(--primary)" : "#c7c7c7"}
+                />
+              ))}
+            </svg>
           </div>
 
+          <h1 className="mt-6 text-center font-display text-2xl font-bold">
+            Morpheidos Tech
+          </h1>
+
+          <ul className="mt-4 space-y-2 text-center text-sm text-white/75">
+            <li className="inline-flex items-center gap-2">
+              <Briefcase className="h-4 w-4 text-white/40" /> Engineering studio
+            </li>
+            <li className="flex items-center justify-center gap-2">
+              <MapPin className="h-4 w-4 text-white/40" /> Eindhoven, Netherlands
+            </li>
+            <li className="flex items-center justify-center gap-2">
+              <Building2 className="h-4 w-4 text-white/40" /> Founded 2024
+            </li>
+          </ul>
+
+          <div className="wavy-divider my-6 w-full" aria-hidden />
+          <p className="text-center text-sm text-white/70">
+            Engineering the possibilities
+          </p>
+          <div className="wavy-divider my-6 w-full" aria-hidden />
+
+          <p className="text-sm leading-relaxed text-white/70">
+            We are an independent engineering studio in the Netherlands
+            delivering embedded systems, cloud platforms and industrial
+            software for forward-looking industries across Europe.
+          </p>
+
+          <div className="mt-6 flex items-center justify-center gap-4 text-white/60">
+            <a href="mailto:hello@morpheidos.nl" className="transition hover:text-primary" aria-label="Email">
+              <Mail className="h-5 w-5" />
+            </a>
+            <a href="#" className="transition hover:text-primary" aria-label="LinkedIn">
+              <Linkedin className="h-5 w-5" />
+            </a>
+            <a href="https://hamedeo.github.io/" className="transition hover:text-primary" aria-label="GitHub">
+              <Github className="h-5 w-5" />
+            </a>
+            <a href="tel:+31201234567" className="transition hover:text-primary" aria-label="Phone">
+              <Phone className="h-5 w-5" />
+            </a>
+          </div>
+        </aside>
+
+        {/* CONTENT */}
+        <main className="max-w-[820px]">
+          {/* ABOUT */}
+          <SectionHeading id="about">About us</SectionHeading>
+          <div className="mt-6 space-y-5 text-[15px] leading-relaxed text-white/85">
+            <p>
+              <strong className="text-white">Morpheidos Tech</strong> is a
+              Netherlands-based engineering studio delivering end-to-end
+              technology services — from concept and architecture through
+              prototyping, production engineering and long-term operations.
+            </p>
+            <p>
+              Our engineers work hand-in-hand with clients across Europe to
+              build <strong className="text-white">embedded systems</strong>,{" "}
+              <strong className="text-white">cloud platforms</strong> and{" "}
+              <strong className="text-white">industrial software</strong> that
+              create measurable business value.
+            </p>
+            <p>
+              We serve clients in mobility, energy and advanced manufacturing
+              with a proven track record of delivering on time, on budget and
+              on ambition.
+            </p>
+          </div>
+
+          <WavyRule />
+
+          {/* SERVICES */}
+          <SectionHeading id="services">Services</SectionHeading>
+          <div className="mt-6 grid gap-6 sm:grid-cols-2">
+            {[
+              {
+                I: CalendarClock,
+                t: "Embedded engineering",
+                d: "Firmware and hardware for safety-critical, connected devices — from FPGA to production-grade C/C++ and Rust.",
+              },
+              {
+                I: BarChart3,
+                t: "Cloud & data platforms",
+                d: "Cloud-native architectures on AWS, Azure and on-prem Kubernetes handling millions of daily industrial events.",
+              },
+              {
+                I: TrendingUp,
+                t: "Industrial software",
+                d: "OPC-UA, MQTT, CAN and Modbus integrations wiring plant floors to modern analytics stacks.",
+              },
+              {
+                I: Users,
+                t: "Advisory & delivery",
+                d: "Discovery, roadmapping and long-term operations with senior engineers embedded in your team.",
+              },
+            ].map(({ I, t, d }) => (
+              <div key={t} className="rounded border border-white/10 bg-ink/60 p-5">
+                <I className="h-5 w-5 text-primary" />
+                <h3 className="mt-3 font-display text-base font-semibold text-white">
+                  {t}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/70">{d}</p>
+              </div>
+            ))}
+          </div>
+
+          <WavyRule />
+
+          {/* VALUES */}
+          <SectionHeading id="values">Core values</SectionHeading>
+          <div className="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-2">
+            {[
+              { t: "People first", d: "Our engineers are at the heart of everything we build. We invest in their growth and their voice." },
+              { t: "Integrity", d: "Honest conversations, transparent estimates, and code we are proud to hand over." },
+              { t: "Innovation", d: "From FPGA firmware to distributed cloud, we explore what is next so clients ship what is best." },
+              { t: "Craft excellence", d: "Every deliverable meets a high bar for architecture, testing and documentation." },
+            ].map((v) => (
+              <div key={v.t}>
+                <h3 className="font-display text-base font-semibold text-white">
+                  <span className="mr-2 text-primary">•</span>
+                  {v.t}
+                </h3>
+                <p className="mt-1 text-sm leading-relaxed text-white/70">{v.d}</p>
+              </div>
+            ))}
+          </div>
+
+          <WavyRule />
+
+          {/* TEAM */}
+          <SectionHeading id="team">Our team</SectionHeading>
+          <p className="mt-6 text-[15px] leading-relaxed text-white/85">
+            Over the past decade our team has delivered complex hardware and
+            software systems for European industry leaders — from
+            safety-critical firmware to cloud-native platforms handling
+            millions of daily events.
+          </p>
+          <ul className="mt-5 space-y-2 text-sm text-white/80">
+            {[
+              "Full-stack expertise across embedded C/C++, Rust, TypeScript and Python",
+              "Cloud-native architectures on AWS, Azure and on-prem Kubernetes",
+              "Industrial protocols: CAN, Modbus, OPC-UA and MQTT",
+              "ISO 27001 and IEC 62443 secure development practices",
+              "Fluent collaboration across Dutch, English, German and French",
+            ].map((b) => (
+              <li key={b} className="flex gap-3">
+                <span className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-primary" />
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
           <img
             src={teamWideImg}
-            alt="Morpheidos company team"
-            width={1920}
-            height={900}
+            alt="Morpheidos engineering team"
+            width={1600}
+            height={700}
             loading="lazy"
-            className="mt-16 h-72 w-full object-cover md:h-96"
+            className="mt-8 h-56 w-full rounded object-cover ring-1 ring-white/10 md:h-72"
           />
-        </section>
 
-        {/* ADVANTAGES */}
-        <section id="advantages" className="relative bg-background px-6 py-20 md:px-12">
-          <h2 className="font-display text-3xl font-bold tracking-[0.15em] text-foreground">
-            OUR<br />ADVANTAGE
-          </h2>
-          <div className="mt-4 h-1 w-16 bg-primary" />
+          <WavyRule />
 
-          <div className="mt-12 grid gap-12 md:grid-cols-2 md:items-center">
-            <div className="relative">
-              <div className="absolute -left-6 -top-6 h-32 w-40 bg-primary" aria-hidden />
-              <img
-                src={advantageImg}
-                alt="Business handshake"
-                width={1000}
-                height={800}
-                loading="lazy"
-                className="relative h-72 w-full object-cover md:h-80"
-              />
-              <div className="absolute -bottom-6 right-6 h-24 w-24 border-4 border-primary" aria-hidden />
-            </div>
-
-            <div className="space-y-8">
+          {/* ADVANTAGE */}
+          <SectionHeading id="advantage">Why work with us</SectionHeading>
+          <div className="mt-6 grid gap-6 sm:grid-cols-2">
+            <img
+              src={advantageImg}
+              alt="Business collaboration"
+              width={800}
+              height={600}
+              loading="lazy"
+              className="h-48 w-full rounded object-cover ring-1 ring-white/10 sm:h-full"
+            />
+            <ul className="space-y-4 text-sm text-white/80">
               {[
-                { I: CalendarClock, t: "EXPERTISE", d: ["Extensive industry knowledge and delivery experience", "Senior-heavy team with 10+ years average tenure", "Full lifecycle: discovery, build and operations"] },
-                { I: Users, t: "CULTURE", d: ["Client-oriented, no-ego collaboration", "Flat structure — engineers own outcomes end-to-end", "Continuous learning built into every sprint"] },
-                { I: TrendingUp, t: "RESULTS", d: ["Measurable business impact from day one", "On-time, on-budget delivery track record", "Exceeds SLAs and customer expectations"] },
-                { I: BarChart3, t: "APPROACH", d: ["Flexible and responsive engagement models", "Transparent communication and reporting", "Strategic execution aligned with your roadmap"] },
-              ].map(({ I, t, d }) => (
-                <div key={t} className="flex gap-5">
-                  <div className="flex h-14 w-14 flex-none items-center justify-center bg-ink text-primary">
-                    <I className="h-7 w-7" />
-                  </div>
-                  <div>
-                    <h3 className="font-display text-base font-bold tracking-[0.2em] text-foreground">{t}</h3>
-                    <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-                      {d.map((line) => <li key={line}>{line}</li>)}
-                    </ul>
-                  </div>
-                </div>
+                ["Senior-heavy team", "10+ years average engineering tenure."],
+                ["End-to-end delivery", "From discovery to build to operations."],
+                ["On-time, on-budget", "Predictable delivery, measurable outcomes."],
+                ["Transparent by default", "Clear reporting, no black boxes."],
+              ].map(([t, d]) => (
+                <li key={t}>
+                  <span className="font-display font-semibold text-white">{t}. </span>
+                  <span className="text-white/70">{d}</span>
+                </li>
               ))}
+            </ul>
+          </div>
+
+          <WavyRule />
+
+          {/* CAREERS */}
+          <SectionHeading id="careers">Careers</SectionHeading>
+          <div className="mt-6 grid gap-6 sm:grid-cols-[1fr_240px] sm:items-start">
+            <div>
+              <p className="text-[15px] leading-relaxed text-white/85">
+                We are always interested to meet engineers who want to become
+                part of the Morpheidos family. Join us and build something
+                that matters — across mobility, energy and advanced
+                manufacturing.
+              </p>
+              <a
+                href="mailto:careers@morpheidos.nl"
+                className="mt-6 inline-block rounded bg-primary px-6 py-2.5 font-sans text-sm font-semibold text-primary-foreground transition hover:brightness-110"
+              >
+                careers@morpheidos.nl
+              </a>
             </div>
+            <img
+              src={careersImg}
+              alt="Colleagues collaborating"
+              width={600}
+              height={600}
+              loading="lazy"
+              className="h-40 w-full rounded object-cover ring-1 ring-white/10 sm:h-48"
+            />
           </div>
-        </section>
 
-        {/* CAREER */}
-        <section id="career" className="relative grid md:grid-cols-2">
-          <div className="bg-ink px-6 py-20 text-white md:px-12">
-            <h2 className="font-display text-3xl font-bold tracking-[0.15em]">CAREERS</h2>
-            <div className="mt-4 h-1 w-16 bg-primary" />
-            <p className="mt-8 max-w-md text-sm leading-relaxed text-white/75">
-              As one of the leading independent engineering studios in the
-              Netherlands, we are always interested to meet people who want to
-              become part of the Morpheidos family.
-            </p>
-            <p className="mt-4 text-sm italic text-white/60">
-              Join us. Build something that matters.
-            </p>
-            <a
-              href="mailto:careers@morpheidos.nl"
-              className="mt-8 inline-block bg-primary px-8 py-3 font-display text-xs font-semibold tracking-[0.25em] text-primary-foreground transition hover:brightness-110"
-            >
-              SEE CAREERS
-            </a>
-          </div>
-          <img
-            src={careersImg}
-            alt="Morpheidos colleagues collaborating"
-            width={1200}
-            height={800}
-            loading="lazy"
-            className="h-72 w-full object-cover md:h-auto"
-          />
-        </section>
+          <WavyRule />
 
-        {/* CONTACT */}
-        <section id="contact" className="relative grid bg-background md:grid-cols-2">
-          <iframe
-            title="Morpheidos office location"
-            src="https://www.openstreetmap.org/export/embed.html?bbox=4.87%2C52.36%2C4.92%2C52.39&layer=mapnik"
-            className="h-72 w-full grayscale md:h-full"
-            loading="lazy"
-          />
-          <div className="px-6 py-16 md:px-12">
-            <h2 className="font-display text-3xl font-bold tracking-[0.15em] text-foreground">CONTACT US</h2>
-            <div className="mt-4 h-1 w-16 bg-primary" />
-            <ul className="mt-10 space-y-6 text-sm text-foreground">
-              <li className="flex items-center gap-4">
-                <Phone className="h-5 w-5 text-primary" />
-                <span>+31 20 123 4567 &nbsp;/&nbsp; +31 6 12 34 56 78</span>
+          {/* CONTACT */}
+          <SectionHeading id="contact">Contact</SectionHeading>
+          <div className="mt-6 grid gap-6 sm:grid-cols-2">
+            <ul className="space-y-4 text-sm text-white/85">
+              <li className="flex items-center gap-3">
+                <Phone className="h-4 w-4 text-primary" />
+                +31 20 123 4567
               </li>
-              <li className="flex items-center gap-4">
-                <Mail className="h-5 w-5 text-primary" />
-                <a href="mailto:hello@morpheidos.nl" className="hover:text-primary">hello@morpheidos.nl</a>
+              <li className="flex items-center gap-3">
+                <Mail className="h-4 w-4 text-primary" />
+                <a href="mailto:hello@morpheidos.nl" className="hover:text-primary">
+                  hello@morpheidos.nl
+                </a>
               </li>
-              <li className="flex items-start gap-4">
-                <MapPin className="mt-0.5 h-5 w-5 text-primary" />
-                <span>Herengracht 420<br />1017 BZ Amsterdam<br />The Netherlands</span>
+              <li className="flex items-start gap-3">
+                <MapPin className="mt-0.5 h-4 w-4 text-primary" />
+                <span>
+                  High Tech Campus 1<br />
+                  5656 AE Eindhoven<br />
+                  The Netherlands
+                </span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Building2 className="h-4 w-4 text-primary" />
+                KVK 00000000 — Registered in the Netherlands
               </li>
             </ul>
-            <div className="mt-10 flex gap-3">
-              {[Facebook, Linkedin, Instagram].map((I, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground transition hover:border-primary hover:text-primary"
-                >
-                  <I className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
+            <iframe
+              title="Morpheidos office location"
+              src="https://www.openstreetmap.org/export/embed.html?bbox=5.44%2C51.40%2C5.47%2C51.42&layer=mapnik"
+              className="h-56 w-full rounded ring-1 ring-white/10 grayscale"
+              loading="lazy"
+            />
           </div>
-        </section>
 
-        {/* FOOTER */}
-        <footer className="relative bg-ink px-6 py-8 md:px-12">
-          <div className="flex flex-wrap items-center justify-between gap-6">
-            <Logo />
-            <nav className="flex flex-wrap items-center gap-6">
-              {NAV.map((n) => (
-                <a key={n.label} href={n.href} className="font-display text-xs tracking-[0.25em] text-white/70 transition hover:text-primary">
-                  {n.label}
-                </a>
-              ))}
-            </nav>
+          <WavyRule />
+
+          {/* Footer note */}
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-white/40">
+            <p>© {new Date().getFullYear()} Morpheidos Tech B.V.</p>
             <a
-              href="#top"
-              className="flex h-10 w-10 items-center justify-center bg-primary text-primary-foreground transition hover:brightness-110"
-              aria-label="Back to top"
+              href="https://hamedeo.github.io/"
+              className="inline-flex items-center gap-2 transition hover:text-primary"
             >
-              <ArrowUp className="h-4 w-4" />
+              <ArrowLeft className="h-3 w-3" /> Back to hamedeo.github.io
             </a>
           </div>
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 text-xs text-white/40">
-            <p>© {new Date().getFullYear()} Morpheidos Tech B.V. — Registered in the Netherlands. All rights reserved.</p>
-            <a href="https://hamedeo.github.io/" className="inline-flex items-center gap-2 font-display tracking-[0.25em] transition hover:text-primary">
-              <ArrowLeft className="h-3 w-3" /> HAMEDEO.GITHUB.IO
-            </a>
-          </div>
-        </footer>
+        </main>
       </div>
     </div>
   );
