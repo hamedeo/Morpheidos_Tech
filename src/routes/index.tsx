@@ -72,8 +72,22 @@ function Home() {
     <div className="relative overflow-hidden bg-background">
       {/* Pure-black canvas with magenta accents, inspired by hamedeo.github.io */}
       <div className="relative mx-auto max-w-[1400px]">
+        {/* Return-to-personal-site bar */}
+        <div className="flex items-center justify-between border-b border-white/10 bg-ink px-6 py-3 text-xs md:px-12">
+          <a
+            href="https://hamedeo.github.io/"
+            className="group inline-flex items-center gap-2 font-display tracking-[0.25em] text-white/70 transition hover:text-primary"
+          >
+            <ArrowLeft className="h-3.5 w-3.5 transition group-hover:-translate-x-0.5" />
+            BACK TO HAMEDEO.GITHUB.IO
+          </a>
+          <span className="hidden font-display tracking-[0.25em] text-white/40 sm:inline">
+            A COMPANY BY <span className="text-primary">HAMED ABDOLLAHI</span>
+          </span>
+        </div>
+
         {/* HERO */}
-        <section className="relative bg-ink pt-6">
+        <section className="relative bg-ink">
           <div className="relative">
             <img
               src={heroImg}
