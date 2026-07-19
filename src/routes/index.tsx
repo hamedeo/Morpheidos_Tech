@@ -68,8 +68,8 @@ function Logo({ className = "" }: { className?: string }) {
 
 function Home() {
   return (
-    <div className="relative overflow-hidden bg-[#f4a72c]">
-      {/* Global side geometric orange background is provided by the yellow body bg */}
+    <div className="relative overflow-hidden bg-background">
+      {/* Pure-black canvas with magenta accents, inspired by hamedeo.github.io */}
       <div className="relative mx-auto max-w-[1200px]">
         {/* HERO */}
         <section className="relative bg-ink pt-6">
