@@ -7,6 +7,7 @@ export const getRouter = () => {
 
   const router = createRouter({
     routeTree,
+    basepath: import.meta.env.BASE_URL.replace(/\/$/, ""),
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
@@ -14,3 +15,11 @@ export const getRouter = () => {
 
   return router;
 };
+
+export type AppRouter = ReturnType<typeof getRouter>;
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: AppRouter;
+  }
+}
