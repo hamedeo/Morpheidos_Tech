@@ -394,9 +394,12 @@ function Home() {
               <ArrowUp className="h-4 w-4" />
             </a>
           </div>
-          <p className="mt-6 text-xs text-white/40">
-            © {new Date().getFullYear()} Morpheidos Tech B.V. — Registered in the Netherlands. All rights reserved.
-          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 text-xs text-white/40">
+            <p>© {new Date().getFullYear()} Morpheidos Tech B.V. — Registered in the Netherlands. All rights reserved.</p>
+            <a href="https://hamedeo.github.io/" className="inline-flex items-center gap-2 font-display tracking-[0.25em] transition hover:text-primary">
+              <ArrowLeft className="h-3 w-3" /> HAMEDEO.GITHUB.IO
+            </a>
+          </div>
         </footer>
       </div>
     </div>
