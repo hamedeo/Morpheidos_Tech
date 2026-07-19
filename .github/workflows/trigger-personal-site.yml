@@ -1,0 +1,23 @@
+name: Trigger combined website deployment
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger hamedeo.github.io deployment
+        env:
+          GH_TOKEN: ${{ secrets.PUBLIC_SITE_DEPLOY_TOKEN }}
+        run: |
+          gh workflow run deploy.yml \
+            --repo hamedeo/hamedeo.github.io \
+            --ref main
