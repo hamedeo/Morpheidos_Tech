@@ -12,8 +12,9 @@ import {
   ArrowLeft,
   Briefcase,
   Building2,
+  ChevronDown,
 } from "lucide-react";
-import aboutImg from "@/assets/about.jpg";
+import heroImg from "@/assets/hero.jpg";
 import teamWideImg from "@/assets/team-wide.jpg";
 import advantageImg from "@/assets/advantage.jpg";
 import careersImg from "@/assets/careers.jpg";
