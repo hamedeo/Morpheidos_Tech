@@ -12,6 +12,7 @@ import {
   Linkedin,
   Instagram,
   ArrowUp,
+  ArrowLeft,
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import aboutImg from "@/assets/about.jpg";
