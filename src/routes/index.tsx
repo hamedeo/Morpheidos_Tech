@@ -137,7 +137,7 @@ function Home() {
       {/* Main grid: sidebar + content */}
       <div className="mx-auto grid max-w-[1400px] gap-10 px-6 pb-24 pt-10 md:grid-cols-[300px_1fr] md:gap-16 md:px-12">
         {/* SIDEBAR */}
-        <aside className="md:sticky md:top-8 md:h-fit">
+        <aside className="md:sticky md:top-32 md:h-fit">
           {/* Brand mark */}
           <div className="mx-auto flex h-52 w-52 items-center justify-center rounded-full bg-ink ring-1 ring-white/10">
             <svg viewBox="0 0 100 100" className="h-28 w-28" aria-hidden>
