@@ -23,7 +23,7 @@ import mechanicalImg from "@/assets/Designer.png";
 import founderImg from "@/assets/HoldingWafer.png";
 import morpheidosLogo from "@/assets/morpheidos-logo.svg";
 
-const CONTACT_ROUTE = "mailto:info@outlook.com"; //"https://hamedeo.github.io/contact/";
+const CONTACT_ROUTE = "mailto:info@morpheidos.tech"; //"https://hamedeo.github.io/contact/";
 const VCARD_URL = "https://hamedeo.github.io/vcf/Hamed_Abdollahi.vcf";
 const TALLY_FORM_URL =
   "https://tally.so/embed/QKWbMG?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1";
@@ -56,7 +56,7 @@ const SIDEBAR_LINKS = [
   { label: "Add contact", href: VCARD_URL, Icon: UserPlus },
   {
     label: "Mail",
-    href: "mailto:info@outlook.com",
+    href: "mailto:info@morpheidos.tech",
     Icon: Mail,
   },
   { label: "Phone", href: "tel:+31622410181", Icon: Phone },
