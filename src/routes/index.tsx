@@ -23,7 +23,7 @@ import mechanicalImg from "@/assets/Designer.png";
 import founderImg from "@/assets/HoldingWafer.png";
 import morpheidosLogo from "@/assets/morpheidos-logo.svg";
 
-const CONTACT_ROUTE = "https://hamedeo.github.io/contact/";
+const CONTACT_ROUTE = "mailto:info@outlook.com";//"https://hamedeo.github.io/contact/";
 const VCARD_URL = "https://hamedeo.github.io/vcf/Hamed_Abdollahi.vcf";
 const TALLY_FORM_URL =
   "https://tally.so/embed/QKWbMG?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1";
@@ -56,7 +56,7 @@ const SIDEBAR_LINKS = [
   { label: "Add contact", href: VCARD_URL, Icon: UserPlus },
   {
     label: "Mail",
-    href: "mailto:hamed.abdollahi+MET@outlook.com",
+    href: "mailto:info@outlook.com",
     Icon: Mail,
   },
   { label: "Phone", href: "tel:+31622410181", Icon: Phone },
@@ -404,11 +404,11 @@ function Home() {
             className="group inline-flex items-center gap-2 font-sans text-white/60 transition hover:text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5 transition group-hover:-translate-x-0.5" />
-            personal website
+            Behind Morpheidos Tech
           </a>
-          <span className="hidden font-sans text-white/40 sm:inline">
+          {/* <span className="hidden font-sans text-white/40 sm:inline">
             A company by <span className="text-primary">Hamed Abdollahi</span>
-          </span>
+          </span> */}
         </div>
         <div className="mx-auto max-w-[1400px] px-6 pb-3 md:px-12">
           <nav
@@ -754,7 +754,7 @@ function Home() {
                   href={CONTACT_ROUTE}
                   className="mt-6 inline-flex rounded bg-primary px-6 py-2.5 font-sans text-sm font-semibold text-primary-foreground transition hover:brightness-110"
                 >
-                  Contact Me
+                  Contact us
                 </a>
               </div>
 
@@ -786,7 +786,7 @@ function Home() {
               className="inline-flex items-center gap-2 transition hover:text-primary"
             >
               <ArrowLeft className="h-3 w-3" />
-              Back to personal website
+              Visit the founder's website
             </a>
           </footer>
         </main>
