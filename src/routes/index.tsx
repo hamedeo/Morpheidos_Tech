@@ -1,33 +1,40 @@
+import { useEffect, useState, type ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
-  CalendarClock,
-  Users,
-  TrendingUp,
-  BarChart3,
-  Phone,
-  Mail,
-  MapPin,
-  Linkedin,
-  Github,
   ArrowLeft,
   Briefcase,
   Building2,
+  CalendarClock,
   ChevronDown,
+  Globe2,
+  Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+  UserPlus,
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
-import teamWideImg from "@/assets/team-wide.jpg";
+import analysisImg from "@/assets/about.jpg";
 import advantageImg from "@/assets/advantage.jpg";
-import careersImg from "@/assets/careers.jpg";
+import mechanicalImg from "@/assets/careers.jpg";
+import founderImg from "@/assets/values.jpg";
+import morpheidosLogo from "@/assets/morpheidos-logo.svg";
+
+const CONTACT_ROUTE = "https://hamedeo.github.io/contact/";
+const VCARD_URL = "https://hamedeo.github.io/vcf/Hamed_Abdollahi.vcf";
+const TALLY_FORM_URL =
+  "https://tally.so/embed/QKWbMG?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1";
+const TALLY_SCRIPT_URL = "https://tally.so/widgets/embed.js";
 
 export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
-      { title: "Morpheidos Tech — Engineering the possibilities" },
+      { title: "Morpheidos Tech — Engineering the Possibilities" },
       {
         name: "description",
         content:
-          "Netherlands-based engineering studio building embedded systems, cloud platforms and industrial software for forward-looking industries.",
+          "Founder-led engineering support for complex product development across high-tech and energy industries.",
       },
     ],
   }),
@@ -36,32 +43,163 @@ export const Route = createFileRoute("/")({
 const NAV = [
   { label: "About", href: "#about" },
   { label: "Services", href: "#services" },
+  { label: "Method", href: "#method" },
   { label: "Values", href: "#values" },
-  { label: "Team", href: "#team" },
-  { label: "Careers", href: "#careers" },
+  { label: "Why us", href: "#advantage" },
   { label: "Contact", href: "#contact" },
 ];
 
+const SIDEBAR_LINKS = [
+  { label: "Add contact", href: VCARD_URL, Icon: UserPlus },
+  {
+    label: "Mail",
+    href: "mailto:hamed.abdollahi+MET@outlook.com",
+    Icon: Mail,
+  },
+  { label: "Phone", href: "tel:+31622410181", Icon: Phone },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/morpheidos-tech",
+    Icon: Linkedin,
+  },
+  {
+    label: "Cal.eu",
+    href: "https://cal.eu/hamedeo",
+    Icon: CalendarClock,
+  },
+];
+
+const VALUES = [
+  {
+    slug: "collaboration",
+    title: "Collaboration",
+    description: "We work as an integrated part of the client’s engineering team.",
+  },
+  {
+    slug: "context",
+    title: "Context First",
+    description: "We understand the existing technology before proposing change.",
+  },
+  {
+    slug: "design",
+    title: "Design Thinking",
+    description: "We frame the right problem before developing the solution.",
+  },
+  {
+    slug: "innovation",
+    title: "Innovation",
+    description: "We introduce practical improvements that create measurable technical value.",
+  },
+];
+
 function WavyRule() {
-  return <div className="wavy-divider my-6 w-full" aria-hidden />;
+  return <div className="wavy-divider my-8 w-full" aria-hidden />;
 }
 
-function SectionHeading({ id, children }: { id: string; children: React.ReactNode }) {
+function SectionHeading({ id, children }: { id: string; children: ReactNode }) {
   return (
     <h2
       id={id}
-      className="flex scroll-mt-24 items-center gap-3 font-display text-2xl font-bold text-primary"
+      className="flex scroll-mt-32 items-center gap-3 font-display text-2xl font-bold text-primary"
     >
-      <span className="h-2 w-2 rounded-full bg-primary" />
+      <span className="h-2 w-2 flex-none rounded-full bg-primary" />
       {children}
     </h2>
   );
 }
 
+function TallyRequestForm() {
+  useEffect(() => {
+    const tallyWindow = window as Window & {
+      Tally?: { loadEmbeds: () => void };
+    };
+
+    const loadForm = () => {
+      if (tallyWindow.Tally) {
+        tallyWindow.Tally.loadEmbeds();
+        return;
+      }
+
+      document
+        .querySelectorAll<HTMLIFrameElement>("iframe[data-tally-src]:not([src])")
+        .forEach((frame) => {
+          const source = frame.dataset.tallySrc;
+          if (source) frame.src = source;
+        });
+    };
+
+    let script = document.querySelector<HTMLScriptElement>(
+      "script[src='" + TALLY_SCRIPT_URL + "']",
+    );
+
+    if (!script) {
+      script = document.createElement("script");
+      script.src = TALLY_SCRIPT_URL;
+      script.async = true;
+      script.addEventListener("load", loadForm);
+      script.addEventListener("error", loadForm);
+      document.head.appendChild(script);
+    } else if (tallyWindow.Tally) {
+      loadForm();
+    } else {
+      script.addEventListener("load", loadForm);
+      script.addEventListener("error", loadForm);
+    }
+
+    return () => {
+      script?.removeEventListener("load", loadForm);
+      script?.removeEventListener("error", loadForm);
+    };
+  }, []);
+
+  return (
+    <div className="tally-form-embed" aria-label="Request engineering support form">
+      <iframe
+        title="Request engineering support"
+        data-tally-src={TALLY_FORM_URL}
+        loading="lazy"
+        width="100%"
+        height="540"
+        className="tally-embed"
+      />
+    </div>
+  );
+}
+
 function Home() {
+  const [activeSection, setActiveSection] = useState("about");
+
+  useEffect(() => {
+    const sectionIds = NAV.map((item) => item.href.slice(1));
+    const sections = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((section): section is HTMLElement => section !== null);
+
+    const updateActiveSection = () => {
+      const marker = window.scrollY + 160;
+      let currentSection = sectionIds[0];
+
+      sections.forEach((section) => {
+        if (section.offsetTop <= marker) currentSection = section.id;
+      });
+
+      setActiveSection(currentSection);
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", updateActiveSection, { passive: true });
+    window.addEventListener("resize", updateActiveSection);
+    window.addEventListener("hashchange", updateActiveSection);
+
+    return () => {
+      window.removeEventListener("scroll", updateActiveSection);
+      window.removeEventListener("resize", updateActiveSection);
+      window.removeEventListener("hashchange", updateActiveSection);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Fixed top bar + nav */}
       <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-background/85 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-3 text-xs md:px-12">
           <a
@@ -76,28 +214,35 @@ function Home() {
           </span>
         </div>
         <div className="mx-auto max-w-[1400px] px-6 pb-3 md:px-12">
-          <nav className="flex flex-wrap items-center justify-end gap-x-8 gap-y-2 text-[15px]">
-            {NAV.map((n, i) => (
-              <a
-                key={n.label}
-                href={n.href}
-                className={`font-sans transition hover:text-primary ${
-                  i === 0
-                    ? "border-b-2 border-primary pb-1 text-primary"
-                    : "text-white/80"
-                }`}
-              >
-                {n.label}
-              </a>
-            ))}
+          <nav
+            aria-label="Page sections"
+            className="flex items-center gap-x-5 overflow-x-auto whitespace-nowrap text-[14px] md:justify-end md:gap-x-8 md:text-[15px]"
+          >
+            {NAV.map((item) => {
+              const sectionId = item.href.slice(1);
+              const isActive = activeSection === sectionId;
+
+              return (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setActiveSection(sectionId)}
+                  aria-current={isActive ? "location" : undefined}
+                  className={
+                    "flex-none font-sans transition hover:text-primary " +
+                    (isActive ? "border-b-2 border-primary pb-1 text-primary" : "text-white/80")
+                  }
+                >
+                  {item.label}
+                </a>
+              );
+            })}
           </nav>
         </div>
       </header>
 
-      {/* Spacer for fixed header */}
       <div className="h-[104px]" aria-hidden />
 
-      {/* HERO */}
       <section className="relative">
         <img
           src={heroImg}
@@ -111,16 +256,14 @@ function Home() {
         <div className="absolute inset-0 flex items-center">
           <div className="mx-auto w-full max-w-[1400px] px-6 md:px-12">
             <div className="max-w-xl">
-              <p className="font-sans text-sm uppercase tracking-[0.35em] text-primary">
+              <h1 className="font-display text-5xl font-bold leading-[1.02] text-primary sm:text-6xl md:text-4xl">
                 Morpheidos Tech
-              </p>
-              <h1 className="mt-4 font-display text-5xl font-bold leading-[1.05] text-white md:text-6xl">
-                Engineering<br />the possibilities
               </h1>
-              <p className="mt-6 max-w-md text-base leading-relaxed text-white/75">
-                Independent engineering studio in the Netherlands — embedded
-                systems, cloud platforms and industrial software for
-                forward-looking industries.
+              <p className="mt-5 font-display text-2xl font-semibold leading-tight text-white sm:text-6xl">
+                Engineering the Possibilities
+              </p>
+              <p className="mt-3 font-sans text-sm uppercase tracking-[0.3em] text-primary sm:text-base">
+                Morphe. Eidos. Techne.
               </p>
               <a
                 href="#about"
@@ -133,213 +276,209 @@ function Home() {
         </div>
       </section>
 
-
-      {/* Main grid: sidebar + content */}
       <div className="mx-auto grid max-w-[1400px] gap-10 px-6 pb-24 pt-10 md:grid-cols-[300px_1fr] md:gap-16 md:px-12">
-        {/* SIDEBAR */}
         <aside className="md:sticky md:top-32 md:h-fit">
-          {/* Brand mark */}
-          <div className="mx-auto flex h-52 w-52 items-center justify-center rounded-full bg-ink ring-1 ring-white/10">
-            <svg viewBox="0 0 100 100" className="h-28 w-28" aria-hidden>
-              {[
-                [25, 25], [50, 25], [75, 25],
-                [25, 50], [50, 50], [75, 50],
-                [25, 75], [50, 75], [75, 75],
-              ].map(([x, y], i) => (
-                <circle
-                  key={i}
-                  cx={x}
-                  cy={y}
-                  r="6"
-                  fill={[0, 4, 8].includes(i) ? "var(--primary)" : "#c7c7c7"}
-                />
-              ))}
-            </svg>
-          </div>
+          <img
+            src={morpheidosLogo}
+            alt="Morpheidos Tech logo"
+            width={204}
+            height={110}
+            className="mx-auto h-auto w-52"
+          />
 
-          <h1 className="mt-6 text-center font-display text-2xl font-bold">
-            Morpheidos Tech
-          </h1>
+          <p className="mt-6 text-center font-display text-2xl font-bold">Morpheidos Tech</p>
 
           <ul className="mt-4 space-y-2 text-center text-sm text-white/75">
             <li className="inline-flex items-center gap-2">
-              <Briefcase className="h-4 w-4 text-white/40" /> Engineering studio
+              <Briefcase className="h-4 w-4 text-white/40" />
+              Engineering Services 
             </li>
             <li className="flex items-center justify-center gap-2">
-              <MapPin className="h-4 w-4 text-white/40" /> Eindhoven, Netherlands
-            </li>
-            <li className="flex items-center justify-center gap-2">
-              <Building2 className="h-4 w-4 text-white/40" /> Founded 2024
+              <MapPin className="h-4 w-4 text-white/40" />
+              Eindhoven, Netherlands
             </li>
           </ul>
 
           <div className="wavy-divider my-6 w-full" aria-hidden />
-          <p className="text-center text-sm text-white/70">
-            Engineering the possibilities
-          </p>
+          <p className="text-center text-sm text-white/70">Engineering the Possibilities</p>
           <div className="wavy-divider my-6 w-full" aria-hidden />
 
           <p className="text-sm leading-relaxed text-white/70">
-            We are an independent engineering studio in the Netherlands
-            delivering embedded systems, cloud platforms and industrial
-            software for forward-looking industries across Europe.
+            Morpheidos Tech provides fast, reliable, and integrated consultancy for complex product
+            development across high-tech and energy industries.
           </p>
 
-          <div className="mt-6 flex items-center justify-center gap-4 text-white/60">
-            <a href="mailto:hello@morpheidos.nl" className="transition hover:text-primary" aria-label="Email">
-              <Mail className="h-5 w-5" />
-            </a>
-            <a href="#" className="transition hover:text-primary" aria-label="LinkedIn">
-              <Linkedin className="h-5 w-5" />
-            </a>
-            <a href="https://hamedeo.github.io/" className="transition hover:text-primary" aria-label="GitHub">
-              <Github className="h-5 w-5" />
-            </a>
-            <a href="tel:+31201234567" className="transition hover:text-primary" aria-label="Phone">
-              <Phone className="h-5 w-5" />
-            </a>
-          </div>
+          <ul className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            {SIDEBAR_LINKS.map(({ label, href, Icon }) => {
+              const external = href.startsWith("https://");
+              return (
+                <li key={label}>
+                  <a
+                    href={href}
+                    target={external ? "_blank" : undefined}
+                    rel={external ? "noreferrer" : undefined}
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-white/70 transition hover:border-primary/60 hover:text-primary"
+                    aria-label={label}
+                    title={label}
+                  >
+                    <Icon className="h-5 w-5" />
+                    <span className="sr-only">{label}</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
         </aside>
 
-        {/* CONTENT */}
-        <main className="max-w-[820px]">
-          {/* ABOUT */}
-          <SectionHeading id="about">About us</SectionHeading>
+        <main className="min-w-0 max-w-[820px]">
+          <SectionHeading id="about">About Morpheidos Tech</SectionHeading>
           <div className="mt-6 space-y-5 text-[15px] leading-relaxed text-white/85">
             <p>
-              <strong className="text-white">Morpheidos Tech</strong> is a
-              Netherlands-based engineering studio delivering end-to-end
-              technology services — from concept and architecture through
-              prototyping, production engineering and long-term operations.
+              Founded in 2025, Morpheidos Tech operates as an independent engineering consultancy
+              supporting product development across high-tech and energy industries in the
+              Netherlands.
             </p>
             <p>
-              Our engineers work hand-in-hand with clients across Europe to
-              build <strong className="text-white">embedded systems</strong>,{" "}
-              <strong className="text-white">cloud platforms</strong> and{" "}
-              <strong className="text-white">industrial software</strong> that
-              create measurable business value.
+              We combine mechanical engineering, analysis and structured project delivery to help
+              organisations move from technical questions to practical, validated solutions.
             </p>
-            <p>
-              We serve clients in mobility, energy and advanced manufacturing
-              with a proven track record of delivering on time, on budget and
-              on ambition.
-            </p>
+            <p>Our main fields are precision hardware and fluid, thermal and pressure systems.</p>
           </div>
 
           <WavyRule />
 
-          {/* SERVICES */}
           <SectionHeading id="services">Services</SectionHeading>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
-            {[
-              {
-                I: CalendarClock,
-                t: "Embedded engineering",
-                d: "Firmware and hardware for safety-critical, connected devices — from FPGA to production-grade C/C++ and Rust.",
-              },
-              {
-                I: BarChart3,
-                t: "Cloud & data platforms",
-                d: "Cloud-native architectures on AWS, Azure and on-prem Kubernetes handling millions of daily industrial events.",
-              },
-              {
-                I: TrendingUp,
-                t: "Industrial software",
-                d: "OPC-UA, MQTT, CAN and Modbus integrations wiring plant floors to modern analytics stacks.",
-              },
-              {
-                I: Users,
-                t: "Advisory & delivery",
-                d: "Discovery, roadmapping and long-term operations with senior engineers embedded in your team.",
-              },
-            ].map(({ I, t, d }) => (
-              <div key={t} className="rounded border border-white/10 bg-ink/60 p-5">
-                <I className="h-5 w-5 text-primary" />
-                <h3 className="mt-3 font-display text-base font-semibold text-white">
-                  {t}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/70">{d}</p>
-              </div>
-            ))}
-          </div>
-
-          <WavyRule />
-
-          {/* VALUES */}
-          <SectionHeading id="values">Core values</SectionHeading>
-          <div className="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-2">
-            {[
-              { t: "People first", d: "Our engineers are at the heart of everything we build. We invest in their growth and their voice." },
-              { t: "Integrity", d: "Honest conversations, transparent estimates, and code we are proud to hand over." },
-              { t: "Innovation", d: "From FPGA firmware to distributed cloud, we explore what is next so clients ship what is best." },
-              { t: "Craft excellence", d: "Every deliverable meets a high bar for architecture, testing and documentation." },
-            ].map((v) => (
-              <div key={v.t}>
-                <h3 className="font-display text-base font-semibold text-white">
-                  <span className="mr-2 text-primary">•</span>
-                  {v.t}
-                </h3>
-                <p className="mt-1 text-sm leading-relaxed text-white/70">{v.d}</p>
-              </div>
-            ))}
-          </div>
-
-          <WavyRule />
-
-          {/* TEAM */}
-          <SectionHeading id="team">Our team</SectionHeading>
-          <p className="mt-6 text-[15px] leading-relaxed text-white/85">
-            Over the past decade our team has delivered complex hardware and
-            software systems for European industry leaders — from
-            safety-critical firmware to cloud-native platforms handling
-            millions of daily events.
+          <p className="mt-4 text-[15px] leading-relaxed text-white/75">
+            Engineering support from product definition to design and validation.
           </p>
-          <ul className="mt-5 space-y-2 text-sm text-white/80">
-            {[
-              "Full-stack expertise across embedded C/C++, Rust, TypeScript and Python",
-              "Cloud-native architectures on AWS, Azure and on-prem Kubernetes",
-              "Industrial protocols: CAN, Modbus, OPC-UA and MQTT",
-              "ISO 27001 and IEC 62443 secure development practices",
-              "Fluent collaboration across Dutch, English, German and French",
-            ].map((b) => (
-              <li key={b} className="flex gap-3">
-                <span className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-primary" />
-                <span>{b}</span>
-              </li>
-            ))}
-          </ul>
-          <img
-            src={teamWideImg}
-            alt="Morpheidos engineering team"
-            width={1600}
-            height={700}
-            loading="lazy"
-            className="mt-8 h-56 w-full rounded object-cover ring-1 ring-white/10 md:h-72"
-          />
+          <div className="services-grid mt-6">
+            <article className="service-card product-development">
+              <img
+                src={advantageImg}
+                alt="Engineering project collaboration"
+                width={800}
+                height={600}
+                loading="lazy"
+                className="service-image product-development-image"
+              />
+              <div className="service-copy product-development-copy">
+                <h3 className="text-[40px]">Product Development Support</h3>
+                <p>
+                  Supporting new product introduction and product changes by translating 
+                  requirements into controlled specifications, traceable PLM data, 
+                  verification activities, and validation evidence for reliable product release.
+                </p>
+                <p className="capability-line">
+                  Product lifecycle management · Technical documentation · Data analysis · Teamcenter · Validation · BOM · SAP
+                </p>
+              </div>
+            </article>
+
+            <article className="service-card">
+              <img
+                src={mechanicalImg}
+                alt="Engineering collaborators reviewing product work"
+                width={1200}
+                height={800}
+                loading="lazy"
+                className="service-image"
+              />
+              <div className="service-copy">
+                <h3>Mechanical Design</h3>
+                <p>
+                  CAD, product definition and tolerance control for components and mechanical
+                  assemblies.
+                </p>
+                <p className="capability-line">
+                  Siemens NX/TC · SolidWorks · GD&amp;T · ASME Y14.5 · Tolerance stack-up · Duramax · CMM
+                </p>
+              </div>
+            </article>
+
+            <article className="service-card">
+              <img
+                src={analysisImg}
+                alt="Engineering data analysis workspace"
+                width={1200}
+                height={800}
+                loading="lazy"
+                className="service-image"
+              />
+              <div className="service-copy">
+                <h3>Engineering Analysis</h3>
+                <p>
+                  Modelling and physics-based analysis for structural, fluid, thermal and pressure-system
+                  performance.
+                </p>
+                <p className="capability-line">
+                  CFD · FEA · ANSYS Fluent · ANSYS Mechanical · MATLAB · ASME BPVC Section VIII · PV Elit 
+                </p>
+              </div>
+            </article>
+          </div>
 
           <WavyRule />
 
-          {/* ADVANTAGE */}
-          <SectionHeading id="advantage">Why work with us</SectionHeading>
+          <SectionHeading id="method">Our Method</SectionHeading>
+          <p className="mt-4 text-[15px] leading-relaxed text-white/75">
+            Form, understanding and execution are treated as one engineering process.
+          </p>
+          <div className="method-grid mt-8">
+            <article className="method-item method-item--eidos">
+              <h3>Eidos</h3>
+              <p>Understand the requirements, principles and constraints behind the problem.</p>
+            </article>
+            <article className="method-item method-item--morphe">
+              <h3>Morphe</h3>
+              <p>Shape the solution around its function, interfaces and environment.</p>
+            </article>
+            <article className="method-item method-item--techne">
+              <h3>Techne</h3>
+              <p>Turn technical reasoning into disciplined engineering delivery.</p>
+            </article>
+          </div>
+
+          <WavyRule />
+
+          <SectionHeading id="values">Core Values</SectionHeading>
+          <div className="core-values-grid mt-8">
+            {VALUES.map((value) => (
+              <article key={value.slug} className={"core-value core-value--" + value.slug}>
+                <h3>{value.title}</h3>
+                <p>{value.description}</p>
+              </article>
+            ))}
+          </div>
+
+          <WavyRule />
+
+          <SectionHeading id="advantage">Why Morpheidos Tech</SectionHeading>
+          {/* <p className="mt-4 text-[15px] leading-relaxed text-white/75">
+            Independent technical ownership supported by engineering, project and digital
+            experience.
+          </p> */}
           <div className="mt-6 grid gap-6 sm:grid-cols-2">
             <img
-              src={advantageImg}
-              alt="Business collaboration"
-              width={800}
-              height={600}
+              src={founderImg}
+              alt="Engineer working at a laptop"
+              width={200}
+              height={500}
               loading="lazy"
-              className="h-48 w-full rounded object-cover ring-1 ring-white/10 sm:h-full"
+              className="h-52 w-full rounded object-cover object-top ring-1 ring-white/10 sm:h-full"
             />
-            <ul className="space-y-4 text-sm text-white/80">
+            <ul className="space-y-4 text-sm">
               {[
-                ["Senior-heavy team", "10+ years average engineering tenure."],
-                ["End-to-end delivery", "From discovery to build to operations."],
-                ["On-time, on-budget", "Predictable delivery, measurable outcomes."],
-                ["Transparent by default", "Clear reporting, no black boxes."],
-              ].map(([t, d]) => (
-                <li key={t}>
-                  <span className="font-display font-semibold text-white">{t}. </span>
-                  <span className="text-white/70">{d}</span>
+                "Technical Ownership",
+                "Engineering with Project Discipline",
+                "High-Tech and Industrial Perspective",
+                "Mechanical and Digital Capability",
+              ].map((point) => (
+                <li
+                  key={point}
+                  className="flex items-start gap-3 border-b border-white/10 pb-4 font-display text-base font-semibold text-white last:border-b-0"
+                >
+                  <span className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-primary" />
+                  <span>{point}</span>
                 </li>
               ))}
             </ul>
@@ -347,82 +486,106 @@ function Home() {
 
           <WavyRule />
 
-          {/* CAREERS */}
-          <SectionHeading id="careers">Careers</SectionHeading>
-          <div className="mt-6 grid gap-6 sm:grid-cols-[1fr_240px] sm:items-start">
-            <div>
-              <p className="text-[15px] leading-relaxed text-white/85">
-                We are always interested to meet engineers who want to become
-                part of the Morpheidos family. Join us and build something
-                that matters — across mobility, energy and advanced
-                manufacturing.
-              </p>
-              <a
-                href="mailto:careers@morpheidos.nl"
-                className="mt-6 inline-block rounded bg-primary px-6 py-2.5 font-sans text-sm font-semibold text-primary-foreground transition hover:brightness-110"
-              >
-                careers@morpheidos.nl
-              </a>
-            </div>
-            <img
-              src={careersImg}
-              alt="Colleagues collaborating"
-              width={600}
-              height={600}
-              loading="lazy"
-              className="h-40 w-full rounded object-cover ring-1 ring-white/10 sm:h-48"
-            />
-          </div>
-
-          <WavyRule />
-
-          {/* CONTACT */}
           <SectionHeading id="contact">Contact</SectionHeading>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
-            <ul className="space-y-4 text-sm text-white/85">
-              <li className="flex items-center gap-3">
-                <Phone className="h-4 w-4 text-primary" />
-                +31 20 123 4567
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="h-4 w-4 text-primary" />
-                <a href="mailto:hello@morpheidos.nl" className="hover:text-primary">
-                  hello@morpheidos.nl
+          <div className="mt-6 rounded border border-white/10 bg-ink/60 p-5 sm:p-6">
+            <div className="contact-layout">
+              <div>
+                <ul className="contact-details-grid text-sm text-white/85">
+                  <li>
+                    <Building2 className="h-4 w-4 text-primary" />
+                    <span>Morpheidos Tech</span>
+                  </li>
+                  {/* <li>
+                    <Briefcase className="h-4 w-4 text-primary" />
+                    <span>Hamed Abdollahi</span>
+                  </li> */}
+                  <li>
+                    <MapPin className="h-4 w-4 text-primary" />
+                    <span>Eindhoven, Netherlands</span>
+                  </li>
+                  {/* <li>
+                    <Mail className="h-4 w-4 text-primary" />
+                    <a
+                      href="mailto:hamed.abdollahi@outlook.com"
+                      className="break-all hover:text-primary"
+                      aria-label="Email Hamed Abdollahi"
+                    >
+                      hamed.abdollahi@outlook.com
+                    </a>
+                  </li> */}
+                  <li>
+                    <Phone className="h-4 w-4 text-primary" />
+                    <a
+                      href="tel:+31622410181"
+                      className="hover:text-primary"
+                      aria-label="Call Hamed Abdollahi"
+                    >
+                      +31 (0)6 2241 0181
+                    </a>
+                  </li>
+                  <li>
+                    <Linkedin className="h-4 w-4 text-primary" />
+                    <a
+                      href="https://www.linkedin.com/company/Morpheidos-Tech"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-primary"
+                      aria-label="Visit Hamed Abdollahi on LinkedIn"
+                    >
+                      linkedin.com/company/Morpheidos-Tech
+                    </a>
+                  </li>
+                  {/* <li>
+                    <Globe2 className="h-4 w-4 text-primary" />
+                    <a
+                      href="https://github.com/hamedeo/"
+                      className="break-all hover:text-primary"
+                      aria-label="Visit the Morpheidos Tech website"
+                    >
+                      github.com/hamedeo/
+                    </a>
+                  </li> */}
+                </ul>
+
+                <a
+                  href={CONTACT_ROUTE}
+                  className="mt-6 inline-flex rounded bg-primary px-6 py-2.5 font-sans text-sm font-semibold text-primary-foreground transition hover:brightness-110"
+                >
+                  Contact Me
                 </a>
-              </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 text-primary" />
-                <span>
-                  High Tech Campus 1<br />
-                  5656 AE Eindhoven<br />
-                  The Netherlands
-                </span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Building2 className="h-4 w-4 text-primary" />
-                KVK 00000000 — Registered in the Netherlands
-              </li>
-            </ul>
-            <iframe
-              title="Morpheidos office location"
-              src="https://www.openstreetmap.org/export/embed.html?bbox=5.44%2C51.40%2C5.47%2C51.42&layer=mapnik"
-              className="h-56 w-full rounded ring-1 ring-white/10 grayscale"
-              loading="lazy"
-            />
+              </div>
+
+              <iframe
+                title="Map of Eindhoven, Netherlands"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=5.44%2C51.40%2C5.47%2C51.42&layer=mapnik"
+                className="contact-map"
+                loading="lazy"
+              />
+            </div>
+
+            <div className="mt-10 border-t border-white/10 pt-8">
+              <h3 className="font-display text-xl font-semibold text-white">
+                Request Engineering Support
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-white/70">
+                Share the technical context, required support and expected timeline.
+              </p>
+              <TallyRequestForm />
+            </div>
           </div>
 
           <WavyRule />
 
-          {/* Footer note */}
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-white/40">
-            <p>© {new Date().getFullYear()} Morpheidos Tech B.V.</p>
+          <footer className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-white/40">
+            <p>© {new Date().getFullYear()} Morpheidos Tech</p>
             <a
               href="https://hamedeo.github.io/"
               className="inline-flex items-center gap-2 transition hover:text-primary"
             >
-              <ArrowLeft className="h-3 w-3" /> Back to hamedeo.github.io
+              <ArrowLeft className="h-3 w-3" />
+              Back to hamedeo.github.io
             </a>
-          </div>
+          </footer>
         </main>
       </div>
     </div>
