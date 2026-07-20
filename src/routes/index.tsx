@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   ArrowLeft,
@@ -6,6 +6,7 @@ import {
   Building2,
   CalendarClock,
   ChevronDown,
+  FileBadge2,
   Globe2,
   Linkedin,
   Mail,
@@ -13,11 +14,12 @@ import {
   Phone,
   UserPlus,
 } from "lucide-react";
-import heroImg from "@/assets/hero.jpg";
-import analysisImg from "@/assets/about.jpg";
-import advantageImg from "@/assets/advantage.jpg";
-import mechanicalImg from "@/assets/careers.jpg";
-import founderImg from "@/assets/values.jpg";
+import waferStageVideo from "@/assets/WaferStageLith.mp4";
+import turbineAssemblyVideo from "@/assets/TurbineAssembly.mp4";
+import analysisImg from "@/assets/ANSYS.webp";
+import advantageImg from "@/assets/Manufacturing.jpg";
+import mechanicalImg from "@/assets/Designer.png";
+import founderImg from "@/assets/HoldingWafer.png";
 import morpheidosLogo from "@/assets/morpheidos-logo.svg";
 
 const CONTACT_ROUTE = "https://hamedeo.github.io/contact/";
@@ -105,6 +107,115 @@ function SectionHeading({ id, children }: { id: string; children: ReactNode }) {
       <span className="h-2 w-2 flex-none rounded-full bg-primary" />
       {children}
     </h2>
+  );
+}
+
+type HeroPhase = "first-video" | "first-logo" | "second-video" | "second-logo";
+
+function readCssDuration(property: string, fallback: number) {
+  const value = window.getComputedStyle(document.documentElement).getPropertyValue(property).trim();
+  const amount = Number.parseFloat(value);
+
+  if (!Number.isFinite(amount)) return fallback;
+  return value.endsWith("ms") ? amount : amount * 1000;
+}
+
+function HeroMediaSequence() {
+  const [phase, setPhase] = useState<HeroPhase>("first-video");
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const firstVideo = useRef<HTMLVideoElement>(null);
+  const secondVideo = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotionPreference = () => setReducedMotion(motionQuery.matches);
+
+    updateMotionPreference();
+    motionQuery.addEventListener("change", updateMotionPreference);
+    return () => motionQuery.removeEventListener("change", updateMotionPreference);
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion) {
+      firstVideo.current?.pause();
+      secondVideo.current?.pause();
+      return;
+    }
+
+    if (phase === "first-video" || phase === "second-video") {
+      const video = phase === "first-video" ? firstVideo.current : secondVideo.current;
+      const inactiveVideo = phase === "first-video" ? secondVideo.current : firstVideo.current;
+      if (!video) return;
+
+      inactiveVideo?.pause();
+
+      const startVideo = () => {
+        video.currentTime = 0;
+        void video.play().catch(() => {
+          // Muted autoplay may be deferred until enough media is buffered.
+          // The canplay listener below retries without skipping to the logo.
+        });
+      };
+
+      if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+        startVideo();
+      } else {
+        video.addEventListener("canplay", startVideo, { once: true });
+      }
+
+      return () => video.removeEventListener("canplay", startVideo);
+    }
+
+    firstVideo.current?.pause();
+    secondVideo.current?.pause();
+
+    const transitionDuration = readCssDuration("--hero-transition-duration", 900);
+    const logoPause = readCssDuration("--hero-logo-pause", 1500);
+    const nextPhase = phase === "first-logo" ? "second-video" : "first-video";
+    const timer = window.setTimeout(() => setPhase(nextPhase), transitionDuration + logoPause);
+
+    return () => window.clearTimeout(timer);
+  }, [phase, reducedMotion]);
+
+  const showFirstVideo = !reducedMotion && phase === "first-video";
+  const showSecondVideo = !reducedMotion && phase === "second-video";
+  const showLogo = reducedMotion || phase === "first-logo" || phase === "second-logo";
+
+  return (
+    <div
+      className="hero-media-frame"
+      role="img"
+      aria-label={reducedMotion ? "Morpheidos Tech logo" : "Morpheidos Tech engineering montage"}
+    >
+      <video
+        ref={firstVideo}
+        src={waferStageVideo}
+        autoPlay
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+        onEnded={() => phase === "first-video" && setPhase("first-logo")}
+        className={"hero-media hero-video " + (showFirstVideo ? "is-visible" : "")}
+      />
+      <img
+        src={morpheidosLogo}
+        alt=""
+        aria-hidden="true"
+        className={"hero-media hero-sequence-logo " + (showLogo ? "is-visible" : "")}
+      />
+      <video
+        ref={secondVideo}
+        src={turbineAssemblyVideo}
+        autoPlay
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+        onEnded={() => phase === "second-video" && setPhase("second-logo")}
+        className={"hero-media hero-video " + (showSecondVideo ? "is-visible" : "")}
+      />
+    </div>
   );
 }
 
@@ -207,7 +318,7 @@ function Home() {
             className="group inline-flex items-center gap-2 font-sans text-white/60 transition hover:text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5 transition group-hover:-translate-x-0.5" />
-            hamedeo.github.io
+            personal website
           </a>
           <span className="hidden font-sans text-white/40 sm:inline">
             A company by <span className="text-primary">Hamed Abdollahi</span>
@@ -244,13 +355,7 @@ function Home() {
       <div className="h-[104px]" aria-hidden />
 
       <section className="relative">
-        <img
-          src={heroImg}
-          alt="Finger touching a glowing circuit grid"
-          width={1920}
-          height={1080}
-          className="h-[520px] w-full object-cover md:h-[620px]"
-        />
+        <HeroMediaSequence />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
         <div className="absolute inset-0 flex items-center">
@@ -291,7 +396,7 @@ function Home() {
           <ul className="mt-4 space-y-2 text-center text-sm text-white/75">
             <li className="inline-flex items-center gap-2">
               <Briefcase className="h-4 w-4 text-white/40" />
-              Engineering Services 
+              Engineering Services
             </li>
             <li className="flex items-center justify-center gap-2">
               <MapPin className="h-4 w-4 text-white/40" />
@@ -353,36 +458,41 @@ function Home() {
           </p>
           <div className="services-grid mt-6">
             <article className="service-card product-development">
-              <img
-                src={advantageImg}
-                alt="Engineering project collaboration"
-                width={800}
-                height={600}
-                loading="lazy"
-                className="service-image product-development-image"
-              />
+              <div className="media-frame product-development-image media-position-product-development">
+                <img
+                  src={advantageImg}
+                  alt="Precision manufacturing equipment"
+                  width={800}
+                  height={600}
+                  loading="lazy"
+                  className="media-frame-asset"
+                />
+              </div>
               <div className="service-copy product-development-copy">
                 <h3 className="text-[40px]">Product Development Support</h3>
                 <p>
-                  Supporting new product introduction and product changes by translating 
-                  requirements into controlled specifications, traceable PLM data, 
-                  verification activities, and validation evidence for reliable product release.
+                  Supporting new product introduction and product changes by translating
+                  requirements into controlled specifications, traceable PLM data, verification
+                  activities, and validation evidence for reliable product release.
                 </p>
                 <p className="capability-line">
-                  Product lifecycle management · Technical documentation · Data analysis · Teamcenter · Validation · BOM · SAP
+                  Product lifecycle management · Technical documentation · Data analysis ·
+                  Teamcenter · Validation · BOM · SAP
                 </p>
               </div>
             </article>
 
             <article className="service-card">
-              <img
-                src={mechanicalImg}
-                alt="Engineering collaborators reviewing product work"
-                width={1200}
-                height={800}
-                loading="lazy"
-                className="service-image"
-              />
+              <div className="media-frame media-position-mechanical-design">
+                <img
+                  src={mechanicalImg}
+                  alt="Mechanical designer working on a technical model"
+                  width={1200}
+                  height={800}
+                  loading="lazy"
+                  className="media-frame-asset"
+                />
+              </div>
               <div className="service-copy">
                 <h3>Mechanical Design</h3>
                 <p>
@@ -390,28 +500,32 @@ function Home() {
                   assemblies.
                 </p>
                 <p className="capability-line">
-                  Siemens NX/TC · SolidWorks · GD&amp;T · ASME Y14.5 · Tolerance stack-up · Duramax · CMM
+                  Siemens NX/TC · SolidWorks · GD&amp;T · ASME Y14.5 · Tolerance stack-up · Duramax
+                  · CMM
                 </p>
               </div>
             </article>
 
             <article className="service-card">
-              <img
-                src={analysisImg}
-                alt="Engineering data analysis workspace"
-                width={1200}
-                height={800}
-                loading="lazy"
-                className="service-image"
-              />
+              <div className="media-frame media-position-engineering-analysis">
+                <img
+                  src={analysisImg}
+                  alt="Engineering simulation in ANSYS"
+                  width={1200}
+                  height={800}
+                  loading="lazy"
+                  className="media-frame-asset"
+                />
+              </div>
               <div className="service-copy">
                 <h3>Engineering Analysis</h3>
                 <p>
-                  Modelling and physics-based analysis for structural, fluid, thermal and pressure-system
-                  performance.
+                  Modelling and physics-based analysis for structural, fluid, thermal and
+                  pressure-system performance.
                 </p>
                 <p className="capability-line">
-                  CFD · FEA · ANSYS Fluent · ANSYS Mechanical · MATLAB · ASME BPVC Section VIII · PV Elit 
+                  CFD · FEA · ANSYS Fluent · ANSYS Mechanical · MATLAB · ASME BPVC Section VIII · PV
+                  Elit
                 </p>
               </div>
             </article>
@@ -457,28 +571,27 @@ function Home() {
             Independent technical ownership supported by engineering, project and digital
             experience.
           </p> */}
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
-            <img
-              src={founderImg}
-              alt="Engineer working at a laptop"
-              width={200}
-              height={500}
-              loading="lazy"
-              className="h-52 w-full rounded object-cover object-top ring-1 ring-white/10 sm:h-full"
-            />
-            <ul className="space-y-4 text-sm">
+          <div className="advantage-layout grid gap-6 sm:grid-cols-2">
+            <div className="media-frame advantage-media-frame media-position-why-morpheidos">
+              <img
+                src={founderImg}
+                alt="Engineer holding a semiconductor wafer"
+                width={200}
+                height={700}
+                loading="lazy"
+                className="media-frame-asset"
+              />
+            </div>
+            <ul className="advantage-points">
               {[
                 "Technical Ownership",
                 "Engineering with Project Discipline",
                 "High-Tech and Industrial Perspective",
                 "Mechanical and Digital Capability",
               ].map((point) => (
-                <li
-                  key={point}
-                  className="flex items-start gap-3 border-b border-white/10 pb-4 font-display text-base font-semibold text-white last:border-b-0"
-                >
-                  <span className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-primary" />
-                  <span>{point}</span>
+                <li key={point} className="advantage-point">
+                  <span className="advantage-point-dot" aria-hidden="true" />
+                  <span className="advantage-point-text">{point}</span>
                 </li>
               ))}
             </ul>
@@ -535,6 +648,10 @@ function Home() {
                       linkedin.com/company/Morpheidos-Tech
                     </a>
                   </li>
+                  <li>
+                    <FileBadge2 className="h-4 w-4 text-primary" />
+                    <span>KVK-nummer: 96785497</span>
+                  </li>
                   {/* <li>
                     <Globe2 className="h-4 w-4 text-primary" />
                     <a
@@ -583,7 +700,7 @@ function Home() {
               className="inline-flex items-center gap-2 transition hover:text-primary"
             >
               <ArrowLeft className="h-3 w-3" />
-              Back to hamedeo.github.io
+              Back to personal website
             </a>
           </footer>
         </main>
