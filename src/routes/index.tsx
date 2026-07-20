@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import waferStageVideo from "@/assets/WaferStageLith.mp4";
 import turbineAssemblyVideo from "@/assets/TurbineAssembly.mp4";
+import energyFlowVideo from "@/assets/EnergyFlow.mp4";
 import analysisImg from "@/assets/ANSYS.webp";
 import advantageImg from "@/assets/Manufacturing.jpg";
 import mechanicalImg from "@/assets/Designer.png";
@@ -110,7 +111,8 @@ function SectionHeading({ id, children }: { id: string; children: ReactNode }) {
   );
 }
 
-type HeroPhase = "first-video" | "first-logo" | "second-video" | "second-logo";
+type HeroPhase =
+  "first-video" | "first-trace" | "second-video" | "second-trace" | "third-video" | "third-trace";
 
 function readCssDuration(property: string, fallback: number) {
   const value = window.getComputedStyle(document.documentElement).getPropertyValue(property).trim();
@@ -120,41 +122,94 @@ function readCssDuration(property: string, fallback: number) {
   return value.endsWith("ms") ? amount : amount * 1000;
 }
 
-function HeroMediaSequence() {
-  const [phase, setPhase] = useState<HeroPhase>("first-video");
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const firstVideo = useRef<HTMLVideoElement>(null);
-  const secondVideo = useRef<HTMLVideoElement>(null);
+const HERO_TRACE_PATH =
+  "M520 210 L950 210 C965 210 975 198 975 180 L975 135 C975 125 985 125 985 135 L985 178 C985 198 1000 210 1020 210 C1042 210 1058 192 1058 170 L1058 135 C1058 128 1063 125 1068 125 C1074 125 1078 130 1078 136 L1078 178 C1078 160 1088 140 1110 134 C1128 129 1142 135 1148 146 C1134 137 1115 139 1104 151 C1094 162 1100 174 1118 178 L1145 178 C1123 178 1102 184 1098 198 C1094 213 1110 224 1128 222 C1150 220 1166 202 1176 181 C1187 158 1189 140 1204 132 C1212 128 1222 128 1234 128 L1285 128 C1265 128 1248 128 1234 128 L1234 194 C1234 210 1245 218 1259 218 C1272 218 1282 210 1286 199 C1290 207 1302 210 1320 210 L1440 210";
+
+function HeroTrace({ visible }: { visible: boolean }) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const pathRef = useRef<SVGPathElement>(null);
+  const [isMeasured, setIsMeasured] = useState(false);
 
   useEffect(() => {
-    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updateMotionPreference = () => setReducedMotion(motionQuery.matches);
+    const svg = svgRef.current;
+    const path = pathRef.current;
+    if (!svg || !path) return;
 
-    updateMotionPreference();
-    motionQuery.addEventListener("change", updateMotionPreference);
-    return () => motionQuery.removeEventListener("change", updateMotionPreference);
+    const totalLength = path.getTotalLength();
+    const highlightLength = Math.max(totalLength * 0.025, 20);
+    svg.style.setProperty("--trace-path-length", String(totalLength));
+    svg.style.setProperty("--trace-highlight-length", String(highlightLength));
+    svg.style.setProperty("--trace-highlight-end", String(-totalLength));
+    setIsMeasured(true);
   }, []);
 
-  useEffect(() => {
-    if (reducedMotion) {
-      firstVideo.current?.pause();
-      secondVideo.current?.pause();
-      return;
-    }
+  return (
+    <svg
+      ref={svgRef}
+      viewBox="0 0 1440 360"
+      className={"hero-trace " + (visible && isMeasured ? "is-visible" : "")}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <defs>
+        <path id="hero-trace-route" ref={pathRef} d={HERO_TRACE_PATH} />
+      </defs>
+      <use href="#hero-trace-route" className="trace-path trace-continuous-path" />
+      <use href="#hero-trace-route" className="trace-path trace-moving-highlight" />
+    </svg>
+  );
+}
 
-    if (phase === "first-video" || phase === "second-video") {
-      const video = phase === "first-video" ? firstVideo.current : secondVideo.current;
-      const inactiveVideo = phase === "first-video" ? secondVideo.current : firstVideo.current;
+function HeroMediaSequence() {
+  const [phase, setPhase] = useState<HeroPhase>("first-video");
+  const [playbackFailed, setPlaybackFailed] = useState(false);
+  const firstVideo = useRef<HTMLVideoElement>(null);
+  const secondVideo = useRef<HTMLVideoElement>(null);
+  const thirdVideo = useRef<HTMLVideoElement>(null);
+
+  const enterTracePhase = (expectedPhase: HeroPhase, tracePhase: HeroPhase) => {
+    if (phase !== expectedPhase) return;
+
+    firstVideo.current?.pause();
+    secondVideo.current?.pause();
+    thirdVideo.current?.pause();
+    setPhase(tracePhase);
+  };
+
+  useEffect(() => {
+    if (phase === "first-video" || phase === "second-video" || phase === "third-video") {
+      const video =
+        phase === "first-video"
+          ? firstVideo.current
+          : phase === "second-video"
+            ? secondVideo.current
+            : thirdVideo.current;
+      const inactiveVideos = [firstVideo.current, secondVideo.current, thirdVideo.current].filter(
+        (candidate): candidate is HTMLVideoElement => candidate !== null && candidate !== video,
+      );
       if (!video) return;
 
-      inactiveVideo?.pause();
+      video.muted = true;
+      video.defaultMuted = true;
+      inactiveVideos.forEach((inactiveVideo) => {
+        inactiveVideo.muted = true;
+        inactiveVideo.defaultMuted = true;
+        inactiveVideo.pause();
+      });
+      setPlaybackFailed(false);
+
+      let cancelled = false;
 
       const startVideo = () => {
+        video.muted = true;
         video.currentTime = 0;
-        void video.play().catch(() => {
-          // Muted autoplay may be deferred until enough media is buffered.
-          // The canplay listener below retries without skipping to the logo.
-        });
+        const playPromise = video.play();
+
+        if (playPromise) {
+          void playPromise.catch(() => {
+            if (!cancelled) setPlaybackFailed(true);
+          });
+        }
       };
 
       if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
@@ -163,58 +218,89 @@ function HeroMediaSequence() {
         video.addEventListener("canplay", startVideo, { once: true });
       }
 
-      return () => video.removeEventListener("canplay", startVideo);
+      return () => {
+        cancelled = true;
+        video.removeEventListener("canplay", startVideo);
+      };
     }
 
     firstVideo.current?.pause();
     secondVideo.current?.pause();
+    thirdVideo.current?.pause();
 
-    const transitionDuration = readCssDuration("--hero-transition-duration", 900);
-    const logoPause = readCssDuration("--hero-logo-pause", 1500);
-    const nextPhase = phase === "first-logo" ? "second-video" : "first-video";
-    const timer = window.setTimeout(() => setPhase(nextPhase), transitionDuration + logoPause);
+    const traceDuration = readCssDuration("--trace-duration", 3400);
+    const nextPhase =
+      phase === "first-trace"
+        ? "second-video"
+        : phase === "second-trace"
+          ? "third-video"
+          : "first-video";
+    const timer = window.setTimeout(() => setPhase(nextPhase), traceDuration);
 
     return () => window.clearTimeout(timer);
-  }, [phase, reducedMotion]);
+  }, [phase]);
 
-  const showFirstVideo = !reducedMotion && phase === "first-video";
-  const showSecondVideo = !reducedMotion && phase === "second-video";
-  const showLogo = reducedMotion || phase === "first-logo" || phase === "second-logo";
+  const showFirstVideo = !playbackFailed && phase === "first-video";
+  const showSecondVideo = !playbackFailed && phase === "second-video";
+  const showThirdVideo = !playbackFailed && phase === "third-video";
+  const showTrace = phase === "first-trace" || phase === "second-trace" || phase === "third-trace";
 
   return (
-    <div
-      className="hero-media-frame"
-      role="img"
-      aria-label={reducedMotion ? "Morpheidos Tech logo" : "Morpheidos Tech engineering montage"}
-    >
-      <video
-        ref={firstVideo}
-        src={waferStageVideo}
-        autoPlay
-        muted
-        playsInline
-        preload="auto"
-        aria-hidden="true"
-        onEnded={() => phase === "first-video" && setPhase("first-logo")}
-        className={"hero-media hero-video " + (showFirstVideo ? "is-visible" : "")}
-      />
-      <img
-        src={morpheidosLogo}
-        alt=""
-        aria-hidden="true"
-        className={"hero-media hero-sequence-logo " + (showLogo ? "is-visible" : "")}
-      />
-      <video
-        ref={secondVideo}
-        src={turbineAssemblyVideo}
-        autoPlay
-        muted
-        playsInline
-        preload="auto"
-        aria-hidden="true"
-        onEnded={() => phase === "second-video" && setPhase("second-logo")}
-        className={"hero-media hero-video " + (showSecondVideo ? "is-visible" : "")}
-      />
+    <div className="hero-media-frame" role="img" aria-label="Morpheidos Tech engineering montage">
+      <div className="hero-media-pane">
+        <div className={"hero-media hero-video-layer " + (showFirstVideo ? "is-visible" : "")}>
+          <video
+            ref={firstVideo}
+            src={waferStageVideo}
+            autoPlay={phase === "first-video"}
+            muted
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+            onPlaying={() => setPlaybackFailed(false)}
+            onError={() => setPlaybackFailed(true)}
+            onEnded={() => enterTracePhase("first-video", "first-trace")}
+            className="hero-video"
+          />
+        </div>
+        <img
+          src={morpheidosLogo}
+          alt=""
+          aria-hidden="true"
+          className={"hero-media hero-fallback-logo " + (playbackFailed ? "is-visible" : "")}
+        />
+        <div className={"hero-media hero-video-layer " + (showSecondVideo ? "is-visible" : "")}>
+          <video
+            ref={secondVideo}
+            src={turbineAssemblyVideo}
+            autoPlay={phase === "second-video"}
+            muted
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+            onPlaying={() => setPlaybackFailed(false)}
+            onError={() => setPlaybackFailed(true)}
+            onEnded={() => enterTracePhase("second-video", "second-trace")}
+            className="hero-video"
+          />
+        </div>
+        <div className={"hero-media hero-video-layer " + (showThirdVideo ? "is-visible" : "")}>
+          <video
+            ref={thirdVideo}
+            src={energyFlowVideo}
+            autoPlay={phase === "third-video"}
+            muted
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+            onPlaying={() => setPlaybackFailed(false)}
+            onError={() => setPlaybackFailed(true)}
+            onEnded={() => enterTracePhase("third-video", "third-trace")}
+            className="hero-video"
+          />
+        </div>
+      </div>
+      <HeroTrace visible={showTrace} />
     </div>
   );
 }

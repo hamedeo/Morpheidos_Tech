@@ -66,7 +66,14 @@
     calc((100vw - var(--hero-content-max-width)) / 2 + var(--hero-content-gutter))
   );
   --hero-transition-duration: 900ms;
-  --hero-logo-pause: 1.5s;
+  --trace-width: 100%;
+  --trace-position-x: 50%;
+  --trace-position-y: 50%;
+  --trace-mobile-position-x: -6%;
+  --trace-mobile-position-y: 92%;
+  --trace-duration: 4.2s;
+  --trace-glow: 0.55rem;
+  --trace-stroke-width: 2px;
 }
 
 @layer base {
@@ -118,17 +125,32 @@
   position: relative;
   width: 100%;
   height: var(--hero-media-height);
+  min-height: var(--hero-media-height);
   overflow: hidden;
   background: var(--background);
 }
 
-.hero-media {
+.hero-media-pane {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   width: var(--hero-media-width);
   height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero-media {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
   opacity: 0;
   transition: opacity var(--hero-transition-duration) ease-in-out;
 }
@@ -137,51 +159,137 @@
   opacity: 1;
 }
 
-.hero-video {
-  object-fit: cover;
-  object-position: var(--hero-object-position);
-  -webkit-mask-image:
-    linear-gradient(
-      to right,
-      transparent 0,
-      black var(--hero-text-fade),
-      black calc(100% - var(--hero-edge-fade)),
-      transparent 100%
-    ),
-    linear-gradient(
-      to bottom,
-      transparent 0,
-      black var(--hero-edge-fade),
-      black calc(100% - var(--hero-edge-fade)),
-      transparent 100%
-    );
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(
-      to right,
-      transparent 0,
-      black var(--hero-text-fade),
-      black calc(100% - var(--hero-edge-fade)),
-      transparent 100%
-    ),
-    linear-gradient(
-      to bottom,
-      transparent 0,
-      black var(--hero-edge-fade),
-      black calc(100% - var(--hero-edge-fade)),
-      transparent 100%
-    );
-  mask-composite: intersect;
+.hero-video-layer {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black var(--hero-text-fade),
+    black calc(100% - var(--hero-edge-fade)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black var(--hero-text-fade),
+    black calc(100% - var(--hero-edge-fade)),
+    transparent 100%
+  );
 }
 
-.hero-sequence-logo {
-  z-index: 1;
+.hero-video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: var(--hero-object-position);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black var(--hero-edge-fade),
+    black calc(100% - var(--hero-edge-fade)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black var(--hero-edge-fade),
+    black calc(100% - var(--hero-edge-fade)),
+    transparent 100%
+  );
+}
+
+.hero-fallback-logo {
+  z-index: 2;
   box-sizing: border-box;
   right: var(--hero-logo-right);
   width: var(--hero-logo-width);
   object-fit: contain;
   object-position: center;
   padding: 0;
+}
+
+.hero-trace {
+  position: absolute;
+  z-index: 3;
+  top: var(--trace-mobile-position-y);
+  left: var(--trace-mobile-position-x);
+  width: 200%;
+  height: auto;
+  overflow: visible;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.hero-trace.is-visible {
+  opacity: 1;
+}
+
+.trace-path {
+  fill: none;
+  stroke: white;
+  stroke-width: var(--trace-stroke-width);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 var(--trace-glow) rgb(255 255 255 / 75%));
+}
+
+.trace-continuous-path {
+  stroke-dasharray: var(--trace-path-length, 1);
+  stroke-dashoffset: var(--trace-path-length, 1);
+}
+
+.trace-moving-highlight {
+  stroke-width: calc(var(--trace-stroke-width) + 1.2px);
+  stroke-dasharray: var(--trace-highlight-length, 0) var(--trace-path-length, 1);
+  stroke-dashoffset: 0;
+  opacity: 0;
+  filter: drop-shadow(0 0 calc(var(--trace-glow) + 0.3rem) white);
+}
+
+.hero-trace.is-visible .trace-continuous-path {
+  animation: trace-continuous-draw var(--trace-duration) linear forwards;
+}
+
+.hero-trace.is-visible .trace-moving-highlight {
+  animation: trace-highlight-sweep var(--trace-duration) linear forwards;
+}
+
+@keyframes trace-continuous-draw {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: var(--trace-path-length, 1);
+  }
+  5% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes trace-highlight-sweep {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  94% {
+    opacity: 1;
+    stroke-dashoffset: var(--trace-highlight-end, -1);
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: var(--trace-highlight-end, -1);
+  }
 }
 
 .media-frame {
@@ -416,8 +524,8 @@
   }
 
   .service-card:not(.product-development) .media-frame {
-   height: var(--media-frame-height);
-   aspect-ratio: auto;
+    height: var(--media-frame-height);
+    aspect-ratio: auto;
   }
 
   .advantage-media-frame {
@@ -550,18 +658,10 @@
     --hero-media-height: 620px;
     --hero-content-gutter: 9rem;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .hero-media {
-    transition: none;
-  }
-
-  .hero-video {
-    display: none;
-  }
-
-  .hero-sequence-logo {
-    opacity: 1;
+  .hero-trace {
+    top: var(--trace-position-y);
+    left: var(--trace-position-x);
+    width: var(--trace-width);
   }
 }
