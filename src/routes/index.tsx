@@ -23,7 +23,7 @@ import mechanicalImg from "@/assets/Designer.png";
 import founderImg from "@/assets/HoldingWafer.png";
 import morpheidosLogo from "@/assets/morpheidos-logo.svg";
 
-const CONTACT_ROUTE = "mailto:info@outlook.com";//"https://hamedeo.github.io/contact/";
+const CONTACT_ROUTE = "mailto:info@outlook.com"; //"https://hamedeo.github.io/contact/";
 const VCARD_URL = "https://hamedeo.github.io/vcf/Hamed_Abdollahi.vcf";
 const TALLY_FORM_URL =
   "https://tally.so/embed/QKWbMG?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1";
@@ -122,40 +122,49 @@ function readCssDuration(property: string, fallback: number) {
   return value.endsWith("ms") ? amount : amount * 1000;
 }
 
-const HERO_TRACE_PATH =
-  "M520 210 L940 210 C960 210 970 195 970 175 L970 130 C970 120 982 120 982 130 L982 178 C982 198 998 210 1018 210 C1040 210 1056 193 1056 172 L1056 130 C1056 120 1068 120 1068 130 L1068 178 C1068 198 1084 210 1104 210 C1126 210 1142 192 1142 170 L1142 136 C1164 122 1198 124 1212 142 C1190 132 1164 137 1155 153 C1147 168 1160 178 1182 178 L1210 178 L1182 178 C1158 178 1148 190 1152 204 C1158 226 1194 230 1220 210 C1234 194 1240 168 1248 142 C1254 128 1266 126 1280 126 L1340 126 L1295 126 L1295 196 C1295 211 1308 218 1322 218 C1336 218 1346 210 1350 199 C1354 207 1362 210 1370 210 L1440 210";
-
 function HeroTrace({ visible }: { visible: boolean }) {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const pathRef = useRef<SVGPathElement>(null);
-  const [isMeasured, setIsMeasured] = useState(false);
-
-  useEffect(() => {
-    const svg = svgRef.current;
-    const path = pathRef.current;
-    if (!svg || !path) return;
-
-    const totalLength = path.getTotalLength();
-    const highlightLength = Math.max(totalLength * 0.025, 20);
-    svg.style.setProperty("--trace-path-length", String(totalLength));
-    svg.style.setProperty("--trace-highlight-length", String(highlightLength));
-    svg.style.setProperty("--trace-highlight-end", String(-totalLength));
-    setIsMeasured(true);
-  }, []);
-
   return (
     <svg
-      ref={svgRef}
       viewBox="0 0 1440 360"
-      className={"hero-trace " + (visible && isMeasured ? "is-visible" : "")}
+      className={"hero-trace " + (visible ? "is-visible" : "")}
       aria-hidden="true"
       focusable="false"
     >
       <defs>
-        <path id="hero-trace-route" ref={pathRef} d={HERO_TRACE_PATH} />
+        <linearGradient id="hero-trace-mask-gradient" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="black" />
+          <stop offset="0.42" stopColor="white" stopOpacity="0.42" />
+          <stop offset="0.82" stopColor="white" />
+          <stop offset="1" stopColor="white" />
+        </linearGradient>
+        <mask
+          id="hero-trace-sweep-mask"
+          maskUnits="userSpaceOnUse"
+          x="-380"
+          y="0"
+          width="700"
+          height="110"
+        >
+          <rect
+            className="trace-sweep-mask"
+            x="-370"
+            y="0"
+            height="110"
+            fill="url(#hero-trace-mask-gradient)"
+          />
+        </mask>
       </defs>
-      <use href="#hero-trace-route" className="trace-path trace-continuous-path" />
-      <use href="#hero-trace-route" className="trace-path trace-moving-highlight" />
+      <g className="trace-unit">
+        <g className="trace-artwork" mask="url(#hero-trace-sweep-mask)">
+          <line x1="-232.2" y1="55.5" x2="29" y2="55.5" />
+          <path d="M39.05 79.5V34.2C39.05 32.8 39.8 32 40.8 32s1.8.8 1.8 2.2v21.3c0 7.4 5.3 12 13.8 12 8.8 0 16-6.5 16-15.2V33" />
+          <path d="M72.4 33v23.5c0 5.8 5 9.1 11.3 9.1 4.2 0 7.8-3.2 9.8-7.6 1.5-5.5 7-9 15-9H112 M93.5 58c0 5.8 5 9.5 12.4 9.5 9.5 0 15.9-5.5 19-12.3 2.9-6.8 3.2-15 8.3-19.1 2.9-2.4 7.2-2.1 12.8-2.1h28.8" />
+          <path d="M119.2 37c-3.1-4.1-8.3-5-13.5-4.5-6.6.7-10.8 4.2-10.8 9.1 0 5 5.2 7.9 13.2 7.9h3.6" />
+          <path d="M150.5 34v26.5c0 4.2 3.1 6.7 7.6 6.7 4.1 0 7-2.2 7.6-5.6" />
+          <line x1="185" y1="55.5" x2="278.9" y2="55.5" />
+        </g>
+        <rect className="trace-pulse-front" x="-260" y="12" width="1.5" height="86" rx="0.75" />
+      </g>
     </svg>
   );
 }

@@ -71,9 +71,11 @@
   --trace-position-y: 50%;
   --trace-mobile-position-x: -6%;
   --trace-mobile-position-y: 92%;
-  --trace-duration: 4.2s;
+  --trace-duration: 3s;
+  --trace-scale: 1.8;
   --trace-glow: 0.55rem;
   --trace-stroke-width: 2px;
+  --trace-sweep-width: 110px;
 }
 
 @layer base {
@@ -225,70 +227,51 @@
   opacity: 1;
 }
 
-.trace-path {
+.trace-unit {
+  transform: translate(938px, 80px) scale(var(--trace-scale));
+  transform-origin: 0 0;
+}
+
+.trace-artwork {
   fill: none;
   stroke: white;
-  stroke-width: var(--trace-stroke-width);
+  stroke-width: 2.36;
   stroke-linecap: round;
   stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
   filter: drop-shadow(0 0 var(--trace-glow) rgb(255 255 255 / 75%));
 }
 
-.trace-continuous-path {
-  stroke-dasharray: var(--trace-path-length, 1);
-  stroke-dashoffset: var(--trace-path-length, 1);
+.trace-sweep-mask {
+  width: var(--trace-sweep-width);
+  opacity: 0;
 }
 
-.trace-moving-highlight {
-  stroke-width: calc(var(--trace-stroke-width) + 1.2px);
-  stroke-dasharray: var(--trace-highlight-length, 0) var(--trace-path-length, 1);
-  stroke-dashoffset: 0;
+.trace-pulse-front {
+  fill: white;
   opacity: 0;
   filter: drop-shadow(0 0 calc(var(--trace-glow) + 0.3rem) white);
 }
 
-.hero-trace.is-visible .trace-continuous-path {
-  animation: trace-continuous-draw var(--trace-duration) linear forwards;
+.hero-trace.is-visible .trace-sweep-mask,
+.hero-trace.is-visible .trace-pulse-front {
+  animation: trace-sweep-left-to-right var(--trace-duration) linear forwards;
 }
 
-.hero-trace.is-visible .trace-moving-highlight {
-  animation: trace-highlight-sweep var(--trace-duration) linear forwards;
-}
-
-@keyframes trace-continuous-draw {
+@keyframes trace-sweep-left-to-right {
   0% {
     opacity: 0;
-    stroke-dashoffset: var(--trace-path-length, 1);
-  }
-  5% {
-    opacity: 1;
-  }
-  92% {
-    opacity: 1;
-    stroke-dashoffset: 0;
-  }
-  100% {
-    opacity: 0;
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes trace-highlight-sweep {
-  0% {
-    opacity: 0;
-    stroke-dashoffset: 0;
+    transform: translateX(0);
   }
   5% {
     opacity: 1;
   }
   94% {
     opacity: 1;
-    stroke-dashoffset: var(--trace-highlight-end, -1);
+    transform: translateX(560px);
   }
   100% {
     opacity: 0;
-    stroke-dashoffset: var(--trace-highlight-end, -1);
+    transform: translateX(560px);
   }
 }
 
