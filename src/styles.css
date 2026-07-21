@@ -31,7 +31,7 @@
 
 :root {
   --radius: 0.25rem;
-  /* Pure black canvas inspired by hamedeo.github.io */
+  /* Pure black canvas inspired by the personal site */
   --background: oklch(0 0 0);
   --foreground: oklch(0.98 0 0);
   --card: oklch(0.14 0 0);

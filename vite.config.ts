@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-  base: "/Morpheidos_Tech/",
+  base: "/",
   plugins: [
     tanstackRouter({ target: "react", autoCodeSplitting: true }),
     react(),

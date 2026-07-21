@@ -23,8 +23,8 @@ import mechanicalImg from "@/assets/Designer.png";
 import founderImg from "@/assets/HoldingWafer.png";
 import morpheidosLogo from "@/assets/morpheidos-logo.svg";
 
-const CONTACT_ROUTE = "mailto:info@morpheidos.tech"; //"https://hamedeo.github.io/contact/";
-const VCARD_URL = "https://hamedeo.github.io/vcf/Hamed_Abdollahi.vcf";
+const CONTACT_ROUTE = "mailto:info@morpheidos.tech";
+const VCARD_URL = "https://hamed.morpheidos.tech/vcf/Hamed_Abdollahi.vcf";
 const TALLY_FORM_URL =
   "https://tally.so/embed/QKWbMG?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1";
 const TALLY_SCRIPT_URL = "https://tally.so/widgets/embed.js";
@@ -409,7 +409,7 @@ function Home() {
       <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-background/85 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-3 text-xs md:px-12">
           <a
-            href="https://hamedeo.github.io/"
+            href="https://hamed.morpheidos.tech/"
             className="group inline-flex items-center gap-2 font-sans text-white/60 transition hover:text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5 transition group-hover:-translate-x-0.5" />
@@ -791,7 +791,7 @@ function Home() {
           <footer className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-white/40">
             <p>© {new Date().getFullYear()} Morpheidos Tech</p>
             <a
-              href="https://hamedeo.github.io/"
+              href="https://hamed.morpheidos.tech/"
               className="inline-flex items-center gap-2 transition hover:text-primary"
             >
               <ArrowLeft className="h-3 w-3" />
