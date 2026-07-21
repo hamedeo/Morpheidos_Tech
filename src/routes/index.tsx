@@ -661,7 +661,7 @@ function Home() {
 
           <WavyRule />
 
-          <SectionHeading id="advantage">Why Morpheidos Tech</SectionHeading>
+          <SectionHeading id="advantage">Why Morpheidos Tech?</SectionHeading>
           {/* <p className="mt-4 text-[15px] leading-relaxed text-white/75">
             Independent technical ownership supported by engineering, project and digital
             experience.
