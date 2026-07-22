@@ -1,0 +1,23 @@
+# Morpheidos Tech
+
+> Morpheidos Tech is an engineering consultancy supporting complex mechanical product development across high-tech and energy industries.
+
+Morpheidos Tech provides mechanical engineering support in product development, mechanical design, engineering analysis, and fluid and thermal systems.
+
+## Main website
+
+- [Morpheidos Tech](https://morpheidos.tech/): Official company website and overview of services, methods, capabilities, values, and contact information.
+
+## Services
+
+- Product development support
+- Mechanical design
+- Engineering analysis
+- Fluid and thermal engineering
+- Technical documentation and product validation
+
+## Contact
+
+- [Contact Morpheidos Tech](https://morpheidos.tech/#contact)
+- [Founder’s professional website](https://hamed.morpheidos.tech/)
+- [Source repository](https://github.com/hamedeo/Morpheidos_Tech)
