@@ -43,6 +43,8 @@ jobs:
         run: |
           test -f dist/index.html
           test -f dist/404.html
+          test -s dist/robots.txt
+          test -s dist/sitemap.xml
 
           if grep -RFn 'https://hamedeo.github.io/Morpheidos_Tech' dist; then
             echo '::error::Generated output contains the old GitHub Pages URL.'
