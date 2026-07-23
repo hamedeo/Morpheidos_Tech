@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowLeft,
   Briefcase,
@@ -790,6 +790,21 @@ function Home() {
 
           <footer className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-white/40">
             <p>© {new Date().getFullYear()} Morpheidos Tech</p>
+            <div className="flex items-center gap-4">
+              <Link to="/privacy" className="transition hover:text-primary">
+                Privacy
+              </Link>
+              <button
+                type="button"
+                className="cursor-pointer transition hover:text-primary"
+                onClick={() => {
+                  localStorage.removeItem("morpheidos-analytics-consent");
+                  window.location.reload();
+                }}
+              >
+                Cookie settings
+              </button>
+            </div>
             <a
               href="https://hamed.morpheidos.tech/"
               className="inline-flex items-center gap-2 transition hover:text-primary"
