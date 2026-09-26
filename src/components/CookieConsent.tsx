@@ -31,7 +31,9 @@ function loadAnalytics() {
 
   window.dataLayer = window.dataLayer || [];
   window.gtag = function gtag(...args: unknown[]) {
-    window.dataLayer?.push(args);
+    // gtag.js expects an Arguments object; a rest-parameter array is not a command.
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer?.push(arguments);
   };
   window.gtag("js", new Date());
   window.gtag("config", MEASUREMENT_ID, {
